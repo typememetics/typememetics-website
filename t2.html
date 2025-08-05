@@ -111,8 +111,8 @@
 
         .eye {
             position: absolute;
-            width: 3.5cqw;
-            height: 2cqw;
+            width: 4cqw;
+            height: 2.5cqw;
             z-index: 3;
             overflow: hidden;
             border-radius: 50%;
@@ -121,59 +121,130 @@
         .eye .sclera {
             width: 100%;
             height: 100%;
-            background-color: #faf6e9;
+            background: radial-gradient(ellipse at 30% 30%, #ffffff 0%, #f8f4e6 40%, #ede5d0 100%);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: inset 0 0 2px 1px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 3px 1px rgba(0,0,0,0.15), inset 2px 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(200,180,160,0.3);
         }
 
         .eye .iris {
-            width: 60%;
-            height: 60%;
-            background: #a11a1a;
+            width: 65%;
+            height: 65%;
+            background: radial-gradient(circle at 35% 25%, 
+                rgba(180, 50, 50, 0.9) 0%, 
+                #a11a1a 30%, 
+                #7a1515 60%, 
+                #4a0d0d 100%);
             border-radius: 50%;
-            box-shadow: 0 0 3px 1px #ff2a2a, 0 0 5px 2px #a11a1a;
+            box-shadow: 
+                0 0 4px 1px rgba(161, 26, 26, 0.6),
+                inset 0 0 3px rgba(0,0,0,0.4),
+                inset 1px 1px 2px rgba(255,100,100,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+        }
+
+        .eye .iris::before {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(ellipse at 40% 30%, 
+                rgba(255,80,80,0.4) 0%, 
+                transparent 50%);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
         }
 
         .eye .pupil {
-            width: 40%;
-            height: 40%;
-            background: #000;
+            width: 45%;
+            height: 45%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(40,40,40,1) 0%, 
+                #000000 70%, 
+                #000000 100%);
             border-radius: 50%;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.8);
+            position: relative;
+            animation: pupil-center 3s ease-in-out forwards;
+            transform: translateX(-30%);
+        }
+
+        .eye .pupil::after {
+            content: '';
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            top: 20%;
+            left: 25%;
+            filter: blur(0.5px);
+        }
+
+        @keyframes pupil-center {
+            0% { transform: translateX(-30%); }
+            100% { transform: translateX(0%); }
         }
 
         .eye .eyelid {
             position: absolute;
             left: 0;
             width: 100%;
-            height: 50%;
-            background-color: var(--paper-color);
+            height: 52%;
+            background: linear-gradient(to bottom, 
+                rgba(241, 233, 210, 1) 0%, 
+                rgba(230, 220, 200, 1) 70%, 
+                rgba(210, 200, 180, 0.9) 100%);
+            border-radius: 0 0 50% 50%;
         }
 
         .eye .eyelid.top {
             top: 0;
-            animation: open-lid-top 4s ease-in-out forwards;
-            box-shadow: inset 0 -1px 1px -1px rgba(0,0,0,0.4);
+            animation: realistic-blink-top 5s ease-in-out forwards;
+            box-shadow: 
+                inset 0 -2px 3px -1px rgba(0,0,0,0.3),
+                0 1px 2px rgba(0,0,0,0.2);
+            border-radius: 50% 50% 0 0;
+            transform-origin: bottom center;
         }
 
         .eye .eyelid.bottom {
             bottom: 0;
-            animation: open-lid-bottom 4s ease-in-out forwards;
-            box-shadow: inset 0 1px 1px -1px rgba(0,0,0,0.4);
+            animation: realistic-blink-bottom 5s ease-in-out forwards;
+            box-shadow: 
+                inset 0 2px 3px -1px rgba(0,0,0,0.3),
+                0 -1px 2px rgba(0,0,0,0.2);
+            border-radius: 0 0 50% 50%;
+            transform-origin: top center;
         }
 
-        @keyframes open-lid-top {
-            0%, 100% { transform: translateY(0%); }
-            20%, 80% { transform: translateY(-100%); }
+        @keyframes realistic-blink-top {
+            0% { transform: scaleY(1) translateY(0%); }
+            8% { transform: scaleY(1) translateY(-95%); }
+            12% { transform: scaleY(0.8) translateY(-98%); }
+            16% { transform: scaleY(1) translateY(-95%); }
+            85% { transform: scaleY(1) translateY(-95%); }
+            89% { transform: scaleY(0.8) translateY(-98%); }
+            93% { transform: scaleY(1) translateY(-95%); }
+            100% { transform: scaleY(1) translateY(0%); }
         }
-        @keyframes open-lid-bottom {
-            0%, 100% { transform: translateY(0%); }
-            20%, 80% { transform: translateY(100%); }
+        
+        @keyframes realistic-blink-bottom {
+            0% { transform: scaleY(1) translateY(0%); }
+            8% { transform: scaleY(1) translateY(95%); }
+            12% { transform: scaleY(0.8) translateY(98%); }
+            16% { transform: scaleY(1) translateY(95%); }
+            85% { transform: scaleY(1) translateY(95%); }
+            89% { transform: scaleY(0.8) translateY(98%); }
+            93% { transform: scaleY(1) translateY(95%); }
+            100% { transform: scaleY(1) translateY(0%); }
         }
 
         #trigger-button {
@@ -219,7 +290,32 @@
             const container = document.querySelector('.paper');
             if (!container) return;
 
+            const eyePositions = [];
+            const eyeSize = 4; // 4cqw width
+            const minDistance = 5; // minimum distance between eyes in cqw
+
+            function isPositionValid(x, y) {
+                for (const pos of eyePositions) {
+                    const distance = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
+                    if (distance < minDistance) return false;
+                }
+                return true;
+            }
+
             for (let i = 0; i < 50; i++) {
+                let attempts = 0;
+                let x, y;
+                
+                do {
+                    x = Math.random() * (95 - eyeSize);
+                    y = Math.random() * (95 - eyeSize);
+                    attempts++;
+                } while (!isPositionValid(x, y) && attempts < 100);
+
+                if (attempts >= 100) continue; // Skip if can't find valid position
+
+                eyePositions.push({x, y});
+
                 const eye = document.createElement('div');
                 eye.className = 'eye';
 
@@ -244,8 +340,8 @@
                 eye.appendChild(topLid);
                 eye.appendChild(bottomLid);
 
-                eye.style.left = `${Math.random() * 95}%`;
-                eye.style.top = `${Math.random() * 95}%`;
+                eye.style.left = `${x}%`;
+                eye.style.top = `${y}%`;
 
                 const randomDelay = `${Math.random() * 2}s`;
                 topLid.style.animationDelay = randomDelay;
