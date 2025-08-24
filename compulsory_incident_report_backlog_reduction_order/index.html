@@ -18,6 +18,8 @@
       background: var(--bg);
       color: var(--fg);
       font-family: ui-monospace, monospace;
+      overflow-x: hidden;
+      padding-bottom: 20px;
     }
     #terminal {
       position: absolute;
@@ -94,7 +96,9 @@ The Institute for Type Safe Memetic Research
 Report ID: TS-IO-21
 Date: 1995-09-19
 
-During standard archival recovery at the McCarthy Estate, an undocumented artifact was discovered. Symbolically reactive. Cognitively dense. Possibly proto-interface.
+During standard archival recovery at the McCarthy Estate, an undocumented artifact was discovered.
+
+Symbolically reactive. Cognitively dense. Possibly proto-interface.
 
 Exposure was brief. Protocols were maintained.
 
@@ -183,6 +187,7 @@ The eyes are op
     let input = '';
     const history = [];
     let historyIndex = -1;
+    let hasReadFile = false;
 
     function println(text = '') {
       term.write(text.replace(/\n/g, '\r\n') + '\r\n');
@@ -206,10 +211,20 @@ The eyes are op
           if (!name) { println('usage: cat <file>'); break; }
           const content = FS.files[name];
           if (content == null) println(`cat: ${name}: No such file`);
-          else println(content);
+          else {
+            println(content);
+            hasReadFile = true;
+          }
           break;
-        case 'help': println('Available commands: ls, cat <file>, clear, help'); break;
+        case 'help': println('Available commands: ls, cat <file>, clear, help, exit'); break;
         case 'clear': term.clear(); break;
+        case 'exit':
+          if (!hasReadFile) {
+            println('Access denied: Mandatory review of TS-IO-21 required before exit.');
+          } else {
+            window.location.href = 'https://typememetics.institute/';
+          }
+          break;
         default: println(`${cmd}: command not found`);
       }
     }
@@ -249,6 +264,14 @@ The eyes are op
           historyIndex = -1;
           term.write('\x1b[2K\r' + PROMPT());
           input = '';
+        }
+        return;
+      }
+      if (ev.key === 'Tab') {
+        if (input === 'c' || input === 'ca' || input === 'cat' || input === 'cat ') {
+          const remaining = 'cat TS-IO-21'.slice(input.length);
+          term.write(remaining);
+          input = 'cat TS-IO-21';
         }
         return;
       }
