@@ -16,6 +16,9 @@
       perspective: 100vw;
       overflow: hidden;
     }
+    html {
+      overflow: hidden;
+    }
 
     @keyframes tear { 0%{ top:-2px; opacity:0;} 5%{opacity:.5;} 10%{ top:100%; opacity:0;} 100%{opacity:0;} }
     @keyframes glitch { 0% { transform: translate(0); opacity: 1; filter: none; }
@@ -154,6 +157,12 @@
       body.go { animation: none !important; }
       body.go .door, body.go .door .face { animation: none !important; }
     }
+
+    @media (max-width: 768px) {
+      #crtOverlay text {
+        font-size: 12vw !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -203,6 +212,9 @@
     <rect x="0" y="0" width="100%" height="100%" filter="url(#noise)" opacity="0.07"/>
     <rect x="0" y="0" width="100%" height="100%" fill="url(#scanlines)"/>
     <rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" fill="none" stroke="#33FF33" stroke-opacity="0.1" stroke-width="2"/>
+    <text x="50%" y="25%" text-anchor="middle" fill="#33FF33" font-size="18vw" font-weight="bold" font-family="monospace" opacity="0.15" id="mainText">
+      INCIDENT
+    </text>
   </svg>
 
   <script>
@@ -238,6 +250,32 @@
       }
       scheduleGlitch();
       scheduleRoll();
+
+      const mainText = document.getElementById('mainText');
+      const normalWords = ['INCIDENT', 'REPORT', 'BACKLOG', 'REDUCTION', 'ORDER'];
+      const derangedWords = ['BREACH', 'VIOLATE', 'CORRUPT', 'ERASURE', 'CONSUME'];
+      const spookyAscii = ['Ḩ̴̰̱̫̓̂Ë̴́̈Ł̴̩̈P̵̈̊̚', '▓̸̛̭̮̣̈́█̷̰̈́̾Ë̴́̈R̸̀̄̈́R̸̨̛̭̈́O̷̒̑▓', '☠̵̰̫̌̚Ş̴̭̘̔̈́O̷̒̑Ŕ̵̈́̊R̸̨̛̭̈́Ÿ̴̞́☠', '♦̸̛̫̈́♣̷̈̊Ë̴́̈N̸̛̰̈́D̸̞̒♠̵̀̚', 'T̵̒̄Ḧ̸̛̰́Ë̴́̈Ÿ̴̞́S̸̛̭̈́Ë̴́̈Ë̴́̈Ǘ̸̄S̸̛̭̈́'];
+
+      let currentIndex = 0;
+      let iterationCount = 0;
+
+      setInterval(() => {
+        if (mainText) {
+          currentIndex = (currentIndex + 1) % 5;
+          iterationCount++;
+
+          let currentWords;
+          if (iterationCount <= 15) {
+            currentWords = normalWords;
+          } else if (iterationCount <= 30) {
+            currentWords = derangedWords;
+          } else {
+            currentWords = spookyAscii;
+          }
+
+          mainText.textContent = currentWords[currentIndex];
+        }
+      }, 1500);
     })();
   </script>
 </body>
