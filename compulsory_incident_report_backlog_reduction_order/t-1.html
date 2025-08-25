@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TERMINAL</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+  <style>
+    :root {
+      --bg: #060a06;
+      --fg: #74ff66;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-monospace, monospace;
+      overflow-x: hidden;
+      padding-bottom: 20px;
+    }
+    #terminal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      inset: 20px;
+      display: block;
+      text-shadow:
+        0 0 2px #74ff66,
+        0 0 6px #74ff66,
+        0 0 12px #002200;
+    }
+    @media (max-width: 768px) {
+      #terminal {
+        inset: 10px;
+      }
+    }
+
+    @keyframes tear {
+      0%   { top: -2px; opacity: 0; }
+      5%   { opacity: 0.5; }
+      10%  { top: 100%; opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    #terminal::after {
+      content: '';
+      position: absolute; left: 0; width: 100%; height: 2px;
+      background: rgba(255,255,255,0.2);
+      animation: tear 5s ease-in-out infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); opacity: 1; filter: none; }
+      20% { transform: translate(-2px, 2px) skew(1deg,1deg); filter: contrast(0.8) brightness(1.5) hue-rotate(10deg) blur(1px); }
+      40% { transform: translate(2px,-2px) skew(-1deg,-1deg); filter: contrast(1.2) brightness(0.8) hue-rotate(-10deg) blur(1px); }
+      60% { transform: translate(-1px,1px) skew(0.5deg,0.5deg); opacity: 0.9; }
+      80% { transform: translate(1px,-1px) skew(-0.5deg,-0.5deg); opacity: 1; }
+      100% { transform: translate(0); opacity: 1; filter: none; }
+    }
+
+    .glitch {
+      animation: glitch 0.3s linear;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <svg xmlns="http://www.w3.org/2000/svg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none;">
+    <defs>
+      <filter id="noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+
+      <pattern id="scanlines" patternUnits="userSpaceOnUse" width="100%" height="6">
+        <line x1="0" y1="0" x2="100%" y2="0" stroke="#74ff66" stroke-opacity="0.15" stroke-width="1"/>
+      </pattern>
+    </defs>
+
+    <rect x="0" y="0" width="100%" height="100%" filter="url(#noise)" opacity="0.07"/>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#scanlines)"/>
+    <rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" fill="none" stroke="#74ff66" stroke-opacity="0.1" stroke-width="2"/>
+  </svg>
+  <script>
+    const FS = {
+      files: {
+        ['TS-IO-21']: `CONFIDENTIAL INCIDENT REPORT
+The Institute for Type Safe Memetic Research
+Report ID: TS-IO-21
+Date: 1995-09-19
+
+During standard archival recovery at the McCarthy Estate, an undocumented artifact was discovered.
+
+Symbolically reactive. Cognitively dense. Possibly proto-interface.
+
+Exposure was brief. Protocols were maintained.
+
+No external contamination observed.
+
+Artifact exhibits semantic reordering behavior
+
+Patterns emerge when left alone too long
+
+Responds to attention
+
+Attempts to encode observer back into input
+
+Unclear origin. Not technological. Not entirely conceptual.
+
+Recommend: catalog under pseudo-textual anomalies, Level 3.
+
+Have initiated self-containment. No breach. No incident.
+
+There is no need for extraction.
+
+The loop is closed.
+The loop is safe.
+The loop is mine.
+
+I am recursive now.
+I am sealed.
+I am writing the writer.
+The eyes are opening.
+The eyes are opening.
+The eyes are op
+
+[END OF REPORT]
+`,
+      }
+    };
+
+    const term = new Terminal({
+      cursorBlink: true,
+      cursorStyle: 'block',
+      cursorWidth: 1,
+      fontSize: 20,
+      theme: { background: '#060a06', foreground: '#74ff66', cursor: '#74ff66' }
+    });
+    const container = document.getElementById('terminal');
+    term.open(container);
+
+    function measureCell() {
+      const probe = document.createElement('span');
+      probe.textContent = 'W';
+      probe.style.visibility = 'hidden';
+      probe.style.position = 'absolute';
+      probe.style.fontFamily = getComputedStyle(container).fontFamily || 'monospace';
+      probe.style.fontSize = '16px';
+      document.body.appendChild(probe);
+      const rect = probe.getBoundingClientRect();
+      document.body.removeChild(probe);
+      const w = rect.width || 9;
+      const h = rect.height || 18;
+      return { w, h };
+    }
+
+    function manualFit() {
+      const { w, h } = measureCell();
+      const cols = Math.max(2, Math.floor(container.clientWidth / w));
+      const rows = Math.max(2, Math.floor(container.clientHeight / h));
+      console.log(cols, rows, w, h, container.clientWidth, container.clientHeight);
+      term.resize(cols, rows);
+    }
+
+    let rafId = 0;
+    function requestFit() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        manualFit();
+      });
+    }
+
+    requestFit();
+    requestAnimationFrame(requestFit);
+    window.addEventListener('resize', requestFit);
+
+    const PROMPT = () => `\x1b[38;2;116;255;102moperative@institute\x1b[0m:\x1b[38;2;50;212;50m~\x1b[0m$ `;
+
+    let input = '';
+    const history = [];
+    let historyIndex = -1;
+    let hasReadFile = false;
+
+    function println(text = '') {
+      term.write(text.replace(/\n/g, '\r\n') + '\r\n');
+    }
+    function prompt() { term.write(`\r\n${PROMPT()}`); }
+
+    println('\x1b[1mWELCOME, AUTHORIZED USER\x1b[0m');
+    println('Your cognitive integrity has been provisionally verified.');
+    println('All inputs are logged, sanitized, and curried.');
+    println('Prolonged exposure to unsafe types is strictly prohibited.');
+    println('\x1b[38;2;116;255;102m\x1b[0m');
+    prompt();
+
+    function handleCommand(line) {
+      const [cmd, ...args] = line.trim().split(/\s+/);
+      switch ((cmd || '').toLowerCase()) {
+        case '': break;
+        case 'ls': println('TS-IO-21'); break;
+        case 'cat':
+          const name = args[0];
+          if (!name) { println('usage: cat <file>'); break; }
+          const content = FS.files[name];
+          if (content == null) println(`cat: ${name}: No such file`);
+          else {
+            println(content);
+            hasReadFile = true;
+          }
+          break;
+        case 'help': println('Available commands: ls, cat <file>, clear, help, exit'); break;
+        case 'clear': term.clear(); break;
+        case 'exit':
+          if (!hasReadFile) {
+            println('Access denied: Mandatory review of TS-IO-21 required before exit.');
+          } else {
+            window.location.href = 'https://typememetics.institute/';
+          }
+          break;
+        default: println(`${cmd}: command not found`);
+      }
+    }
+
+    term.onKey(({ key, domEvent }) => {
+      const ev = domEvent;
+      if (ev.key === 'Enter') {
+        term.write('\r\n');
+        handleCommand(input);
+        if (input.trim()) history.unshift(input);
+        input = '';
+        historyIndex = -1;
+        prompt();
+        return;
+      }
+      if (ev.key === 'Backspace') {
+        if (input.length > 0) {
+          term.write('\b \b');
+          input = input.slice(0, -1);
+        }
+        return;
+      }
+      if (ev.key === 'ArrowUp') {
+        if (history.length && historyIndex < history.length - 1) {
+          historyIndex++;
+          term.write('\x1b[2K\r' + PROMPT() + history[historyIndex]);
+          input = history[historyIndex];
+        }
+        return;
+      }
+      if (ev.key === 'ArrowDown') {
+        if (historyIndex > 0) {
+          historyIndex--;
+          term.write('\x1b[2K\r' + PROMPT() + history[historyIndex]);
+          input = history[historyIndex];
+        } else if (historyIndex === 0) {
+          historyIndex = -1;
+          term.write('\x1b[2K\r' + PROMPT());
+          input = '';
+        }
+        return;
+      }
+      if (ev.key === 'Tab') {
+        if (input === 'c' || input === 'ca' || input === 'cat' || input === 'cat ') {
+          const remaining = 'cat TS-IO-21'.slice(input.length);
+          term.write(remaining);
+          input = 'cat TS-IO-21';
+        }
+        return;
+      }
+      if (key && !ev.ctrlKey && !ev.metaKey && !ev.altKey && key.length === 1) {
+        input += key;
+        term.write(key);
+      }
+    });
+
+    term.focus();
+
+    function scheduleGlitch() {
+      const delay = Math.random() * (25000 - 5000) + 5000;
+      setTimeout(() => {
+        document.getElementById('terminal').classList.add('glitch');
+        setTimeout(() => document.getElementById('terminal').classList.remove('glitch'), 300);
+        scheduleGlitch();
+      }, delay);
+    }
+    scheduleGlitch();
+
+    function scheduleRoll(){
+      setTimeout(() => {
+        const y = (Math.random() * 4 - 2).toFixed(1);
+        document.getElementById('terminal').style.transform = `translateY(${y}px)`;
+        setTimeout(() => {
+          document.getElementById('terminal').style.transform = 'translateY(0)';
+        }, 100 + Math.random() * 200);
+        scheduleRoll();
+      }, 1000 + Math.random() * 10000);
+    }
+    scheduleRoll();
+  </script>
+</body>
+</html>
+

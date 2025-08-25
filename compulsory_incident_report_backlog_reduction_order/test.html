@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --bg: #222; --fg: #33FF33; --glowA: rgba(51,255,51,.6); --glowB: rgba(51,255,51,.35); }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      perspective: 100vw;
+      overflow: hidden;
+    }
+
+    @keyframes tear { 0%{ top:-2px; opacity:0;} 5%{opacity:.5;} 10%{ top:100%; opacity:0;} 100%{opacity:0;} }
+    @keyframes glitch { 0% { transform: translate(0); opacity: 1; filter: none; }
+      20% { transform: translate(-2px, 2px) skew(1deg,1deg); filter: contrast(0.8) brightness(1.5) hue-rotate(10deg) blur(1px); }
+      40% { transform: translate(2px,-2px) skew(-1deg,-1deg); filter: contrast(1.2) brightness(0.8) hue-rotate(-10deg) blur(1px); }
+      60% { transform: translate(-1px,1px) skew(0.5deg,0.5deg); opacity: 0.9; }
+      80% { transform: translate(1px,-1px) skew(-0.5deg,-0.5deg); opacity: 1; }
+      100% { transform: translate(0); opacity: 1; filter: none; } }
+    .crt-container { position: fixed; inset: 0; z-index: 10; font-family: monospace; pointer-events: auto; }
+    .crt-container::after { content: ''; position: absolute; left: 0; width: 100%; height: 2px; top: -2px; background: rgba(255,255,255,0.2); animation: tear 5s ease-in-out infinite; pointer-events: none; }
+    #startButton { position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); font-family: monospace; font-size: 24px; padding: 10px 20px; text-decoration: none; background: #000; color: #33FF33; border: 2px solid #33FF33; border-radius: 4px; display: inline-block; text-align: center; font-weight: bold; }
+    #startButton:focus { outline: none; box-shadow: 0 0 10px #33FF33; }
+
+    .door {
+      position: fixed;
+      width: 100px;
+      height: 200px;
+      left: 50%;
+      top: 50%;
+      margin-left: -50px;
+      margin-top: -100px;
+      box-shadow: inset 0 -5px 0 0 var(--bg), inset 0 0 0 1px var(--fg), 0 5px 0 0 var(--bg), 0 0 0 100vw var(--bg), 0 0 8px var(--glowA), 0 0 16px var(--glowB);
+      perspective: 500px;
+      transform-style: preserve-3d;
+      transform: translateZ(-1px);
+    }
+    .door::after {
+      content: "";
+      position: absolute;
+      width: 200vw;
+      height: 100vw;
+      left: -50vw;
+      bottom: 5px;
+      box-shadow: 0 1px 0 0 var(--fg), 0 0 8px var(--glowB);
+      z-index: -1;
+    }
+
+    .door .face {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: calc(100% - 4px);
+      transform-style: preserve-3d;
+      box-shadow: inset 0 0 0 1px var(--fg), 0 0 8px var(--glowA), 0 0 16px var(--glowB);
+      background: var(--bg);
+      transform-origin: left;
+    }
+    .door .face::before {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      box-shadow: 0 0 0 1px var(--fg), 0 0 6px var(--glowA), 0 0 12px var(--glowB);
+      border-radius: 100%;
+      right: 10px;
+      top: calc(50% - 5px);
+      transform-style: preserve-3d;
+      transform: translateZ(6px);
+      backface-visibility: hidden;
+      background: var(--bg);
+    }
+    .door .face::after {
+      content: "";
+      position: absolute;
+      width: 4px;
+      height: 2.5px;
+      box-shadow: 0 0 0 1px var(--fg), 0 0 6px var(--glowA), 0 0 12px var(--glowB);
+      opacity: 0.75;
+      border-radius: 0;
+      right: 10px;
+      top: calc(50% - 1.25px);
+      transform-style: preserve-3d;
+      transform: translateZ(2.5px) rotateY(90deg);
+      backface-visibility: hidden;
+      background: var(--bg);
+    }
+    .door .right {
+      position: absolute;
+      width: 10%;
+      background: var(--bg);
+      height: 100%;
+      top: 0;
+      right: -10%;
+      transform-origin: left;
+      transform: rotateY(90deg);
+      box-shadow: inset 0 0 0 1px var(--fg), 0 0 8px var(--glowA), 0 0 16px var(--glowB);
+    }
+
+    .door .face { z-index: 2; }
+
+    .door .label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: start;
+      justify-content: start;
+      padding: 30px 8px 0 8px;
+      color: var(--fg);
+      text-align: center;
+      font-weight: 700;
+      font-size: clamp(10px, 1.6vw, 14px);
+      line-height: 1.2;
+      letter-spacing: 0.5px;
+      transform: translateZ(7px);
+      backface-visibility: hidden;
+      text-shadow: 0 1px 0 rgba(0,0,0,.6);
+      font-size: 12px;
+    }
+
+    @keyframes squiggly-anim {
+      0% { -webkit-filter: url("#squiggly-0"); filter: url("#squiggly-0"); }
+      25% { -webkit-filter: url("#squiggly-1"); filter: url("#squiggly-1"); }
+      50% { -webkit-filter: url("#squiggly-2"); filter: url("#squiggly-2"); }
+      75% { -webkit-filter: url("#squiggly-3"); filter: url("#squiggly-3"); }
+      100% { -webkit-filter: url("#squiggly-4"); filter: url("#squiggly-4"); }
+    }
+    @keyframes scaling {
+      0% { transform: translateZ(0vw); opacity: 1; z-index: 0; }
+      50% { transform: translateZ(100vw); opacity: 1; z-index: 1; }
+      95% { transform: translateZ(200vw); opacity: 1; z-index: 2; }
+      100% { transform: translateZ(300vw); opacity: 0; z-index: 3; }
+    }
+    @keyframes swing {
+      15% { transform: rotateY(0deg); }
+      50% { transform: rotateY(-125deg) translateZ(-2px); }
+      75% { transform: rotateY(-125deg); }
+      100% { transform: rotateY(-125deg); }
+    }
+
+    body.go { animation: squiggly-anim 0.4s linear 1 forwards; -webkit-animation: squiggly-anim 0.4s linear 1 forwards; }
+    body.go .door { animation: scaling 5s linear 1 forwards; }
+    body.go .door .face { animation: swing 5s ease-in-out 1 forwards; }
+
+    @media (prefers-reduced-motion: reduce) {
+      body.go { animation: none !important; }
+      body.go .door, body.go .door .face { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="door">
+    <div class="face"><div class="label">Incident Report Archive</div><div class="right"></div></div>
+  </div>
+
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position:absolute;width:0;height:0">
+    <defs>
+      <filter id="squiggly-0">
+        <feTurbulence baseFrequency="0.01" numOctaves="3" result="noise" seed="0"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+      </filter>
+      <filter id="squiggly-1">
+        <feTurbulence baseFrequency="0.01" numOctaves="3" result="noise" seed="1"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
+      </filter>
+      <filter id="squiggly-2">
+        <feTurbulence baseFrequency="0.01" numOctaves="3" result="noise" seed="2"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+      </filter>
+      <filter id="squiggly-3">
+        <feTurbulence baseFrequency="0.01" numOctaves="3" result="noise" seed="3"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
+      </filter>
+      <filter id="squiggly-4">
+        <feTurbulence baseFrequency="0.01" numOctaves="3" result="noise" seed="4"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="crt-container" id="crt">
+    <button id="startButton" tabindex="0" autofocus>PRESS ANY KEY TO CONTINUE</button>
+  </div>
+
+  <svg id="crtOverlay" xmlns="http://www.w3.org/2000/svg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9">
+    <defs>
+      <filter id="noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+      <pattern id="scanlines" patternUnits="userSpaceOnUse" width="100%" height="6">
+        <line x1="0" y1="0" x2="100%" y2="0" stroke="#33FF33" stroke-opacity="0.15" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" filter="url(#noise)" opacity="0.07"/>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#scanlines)"/>
+    <rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" fill="none" stroke="#33FF33" stroke-opacity="0.1" stroke-width="2"/>
+  </svg>
+
+  <script>
+    (function(){
+      const container = document.getElementById('crt');
+      const startButton = document.getElementById('startButton');
+
+      function start(e){
+        if (e) e.preventDefault();
+        document.body.classList.add('go');
+        if (startButton && startButton.parentNode) startButton.parentNode.removeChild(startButton);
+        if (container) container.style.pointerEvents = 'none';
+      }
+
+      window.addEventListener('keydown', start, { once: true });
+      startButton.addEventListener('pointerdown', start, { once: true });
+
+      function scheduleGlitch(){
+        const delay = Math.random() * (25000 - 5000) + 5000;
+        setTimeout(() => {
+          container.classList.add('glitch');
+          setTimeout(() => container.classList.remove('glitch'), 300);
+          scheduleGlitch();
+        }, delay);
+      }
+      function scheduleRoll(){
+        setTimeout(() => {
+          const y = (Math.random() * 4 - 2).toFixed(1);
+          container.style.transform = `translateY(${y}px)`;
+          setTimeout(() => { container.style.transform = 'translateY(0)'; }, 100 + Math.random() * 200);
+          scheduleRoll();
+        }, 1000 + Math.random() * 10000);
+      }
+      scheduleGlitch();
+      scheduleRoll();
+    })();
+  </script>
+</body>
+</html>
+
