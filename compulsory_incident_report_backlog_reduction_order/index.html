@@ -56,31 +56,7 @@
     <source src="https://r2.typememetics.institute/end2.m4a" type="audio/mp4">
   </audio>
   <div class="container" id="container">
-    <style>
-      #startButton {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-family: monospace;
-        font-size: 24px;
-        padding: 10px 20px;
-        text-decoration: none;
-        background: #000;
-        color: #33FF33;
-        border: 2px solid #33FF33;
-        border-radius: 4px;
-        display: inline-block;
-        text-align: center;
-        font-weight: bold;
-      }
-      #startButton:focus {
-        outline: none;
-        box-shadow: 0 0 10px #33FF33;
-      }
-      </style>
-      <button id="startButton" tabindex="0" autofocus onPress>PRESS ANY KEY TO CONTINUE</button>
-      <script>
+    <script>
       const container = document.getElementById('crt');
       const startButton = document.getElementById('startButton');
       function loadContent() {
@@ -105,7 +81,7 @@
       }
       window.addEventListener('keydown', enterFullscreenAndLoad);
       startButton.addEventListener('pointerdown', enterFullscreenAndLoad);
-      </script>
+    </script>
   </div>
   <script>
     const audio = document.getElementById('wellness-audio');

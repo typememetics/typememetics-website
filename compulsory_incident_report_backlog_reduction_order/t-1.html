@@ -222,7 +222,8 @@ The eyes are op
           if (!hasReadFile) {
             println('Access denied: Mandatory review of TS-IO-21 required before exit.');
           } else {
-            window.location.href = 'https://typememetics.institute/';
+            const message = { type: "NEXT", payload: { url: `p-1.html` } };
+            window.parent.postMessage(message, "*");
           }
           break;
         default: println(`${cmd}: command not found`);
