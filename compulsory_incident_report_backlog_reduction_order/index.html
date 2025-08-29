@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+<body>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    html, body {
+      cursor: pointer;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    .container::after {
+      content: '';
+      position: absolute; left: 0; width: 100%; height: 2px;
+      background: rgba(255,255,255,0.2);
+      animation: tear 5s ease-in-out infinite;
+    }
+
+    .container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      font-family: monospace;
+      font-size: 16px;
+      line-height: 1.2;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+
+  </style>
+  <audio id="wellness-audio" loop>
+    <source src="https://r2.typememetics.institute/operatives%20wellness%20-%20plain.m4a" type="audio/mp4">
+  </audio>
+  <audio id="end2">
+    <source src="https://r2.typememetics.institute/end2.m4a" type="audio/mp4">
+  </audio>
+  <div class="container" id="container">
+    <script>
+      const container = document.getElementById('crt');
+      const startButton = document.getElementById('startButton');
+      function loadContent() {
+        window.removeEventListener('keydown', enterFullscreenAndLoad);
+        handleMessage({ data: { type: "NEXT", payload: { url: "t-1.html" } } });
+      }
+      function enterFullscreenAndLoad(e) {
+        startAudio();
+        e.preventDefault();
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen().then(loadContent);
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen();
+          loadContent();
+        } else if (docEl.msRequestFullscreen) {
+          docEl.msRequestFullscreen();
+          loadContent();
+        } else {
+          loadContent();
+        }
+      }
+      window.addEventListener('keydown', enterFullscreenAndLoad);
+      startButton.addEventListener('pointerdown', enterFullscreenAndLoad);
+    </script>
+  </div>
+  <script>
+    const audio = document.getElementById('wellness-audio');
+    const end2 = document.getElementById('end2');
+    let fadeInterval;
+
+    function startAudio() {
+      clearInterval(fadeInterval);
+      audio.volume = 0;
+      audio.play().then(() => {
+        fadeInVolume(audio, 0.5, 30000);
+      }).catch(err => {
+        console.error('Playback error:', err);
+      });
+    }
+
+    function fadeInVolume(audioEl, targetVolume, duration) {
+      const stepTime = 250;
+      const steps = duration / stepTime;
+      const volumeIncrement = targetVolume / steps;
+
+      let currentVolume = 0;
+      fadeInterval = setInterval(() => {
+        currentVolume += volumeIncrement;
+        if (currentVolume >= targetVolume) {
+          audioEl.volume = targetVolume;
+          clearInterval(fadeInterval);
+        } else {
+          audioEl.volume = currentVolume;
+        }
+      }, stepTime);
+    }
+
+    function stopAudio() {
+      clearInterval(fadeInterval);
+      const stepTime = 250;
+      const duration = 5000;
+      const steps = duration / stepTime;
+      const volumeDecrement = audio.volume / steps;
+
+      fadeInterval = setInterval(() => {
+        audio.volume -= volumeDecrement;
+        if (audio.volume <= 0.01) {
+          audio.volume = 0;
+          audio.pause();
+          audio.currentTime = 0;
+          clearInterval(fadeInterval);
+        }
+      }, stepTime);
+    }
+  </script>
+  <script>
+    function handleMessage(event) {
+        const { type, payload } = event.data;
+        console.log("Received message:", type, payload);
+        if (type === "NEXT") {
+          const container = document.getElementById("container");
+          container.innerHTML = `<iframe id="iframe" tabindex="0" src="${payload.url}"></iframe>`;
+          const iframe = document.getElementById('iframe');
+          iframe.addEventListener('load', () => {
+            console.log("Iframe loaded:", payload.url);
+            iframe.focus();
+          });
+        }
+        if (type === "END") {
+          window.location.href = payload.url;
+        }
+        if (type === "AUDIO_STOP") {
+          stopAudio();
+          end2.play();
+        }
+      };
+
+    window.addEventListener("message", handleMessage);
+    function scheduleGlitch() {
+      const delay = Math.random() * (25000 - 5000) + 5000;
+      setTimeout(() => {
+        container.classList.add('glitch');
+        setTimeout(() => container.classList.remove('glitch'), 300);
+        scheduleGlitch();
+      }, delay);
+    }
+    scheduleGlitch();
+    function scheduleRoll(){
+      setTimeout(() => {
+        const y = (Math.random() * 4 - 2).toFixed(1);
+        container.style.transform = `translateY(${y}px)`;
+        setTimeout(() => {
+          container.style.transform = 'translateY(0)';
+        }, 100 + Math.random() * 200);
+        scheduleRoll();
+      }, 1000 + Math.random() * 10000);
+    }
+    scheduleRoll();
+  </script>
+</body>
+</html>
+

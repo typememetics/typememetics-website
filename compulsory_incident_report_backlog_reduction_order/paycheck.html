@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paycheck</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f0f0f0;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .paycheck-container {
+      width: 800px;
+      height: 350px;
+      max-width: 95%;
+      padding: 20px 40px;
+      border: 2px solid #000;
+      background-color: #fdfaef;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+    .company-info {
+      text-align: left;
+    }
+    .company-name {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .company-address {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .check-info {
+      text-align: right;
+    }
+    .check-number {
+      font-size: 14px;
+    }
+    .date {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .pay-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .pay-to {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pay-to-label {
+      font-size: 22px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .recipient-name {
+      font-size: 18px;
+      font-family: 'Brush Script MT', cursive;
+      border-bottom: 1px solid #000;
+      padding: 0 10px;
+    }
+    .amount-box {
+      border: 2px solid #000;
+      padding: 5px 10px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .amount-in-words {
+      margin-top: 15px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+      font-size: 22px;
+      font-family: 'Brush Script MT', cursive;
+    }
+    .memo {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .memo-label {
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .memo-line {
+      border-bottom: 1px solid #000;
+      flex-grow: 1;
+      font-size: 18px;
+      font-family: 'Brush Script MT', cursive;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: auto;
+      padding-top: 20px;
+    }
+    .signature-block {
+      width: 45%;
+      text-align: center;
+    }
+    .signature-area {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 5px;
+      border-bottom: 1px solid #000;
+    }
+    .signature-svg {
+      width: 150px;
+      height: 40px;
+    }
+    .signature-line {
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .routing-info {
+      font-family: 'MICR', monospace;
+      font-size: 16px;
+    }
+    .print-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        padding: 0;
+      }
+      .paycheck-container {
+        width: 100%;
+        height: 100vh;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        border: 2px solid #000;
+        box-shadow: none;
+        box-sizing: border-box;
+      }
+      .print-button {
+        display: none;
+      }
+    }
+    @font-face {
+      font-family: 'Brush Script MT';
+      src: local('Brush Script MT'), local('BrushScriptMT'), url('https://fonts.gstatic.com/s/greatvibes/v15/6q1c-j9B4s9a49x2mAJf4p-A8tU.woff2') format('woff2');
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'MICR';
+      src: local('MICR'), url('https://db.onlinewebfonts.com/t/004929318f77515a439a2c9a21b87c33.woff2') format('woff2');
+    }
+  </style>
+</head>
+<body>
+
+  <div class="paycheck-container" id="paycheck-container">
+    <div class="header">
+      <div class="company-info">
+        <div class="company-name">Typesafety, Inc.</div>
+        <div class="company-address">
+          Hanging Sword Alley, between Whitefriars Street and Salisbury Square<br>
+          City of London, EC4Y
+        </div>
+      </div>
+      <div class="check-info">
+        <div class="check-number">Check No: 1337</div>
+        <div class="date">Date: 08/07/2025</div>
+      </div>
+    </div>
+
+    <div class="pay-details">
+      <div class="pay-to">
+        <span class="pay-to-label">Pay to the Order of</span>
+        <span class="recipient-name" id="recipient-name">[RECIPIENT NAME]</span>
+      </div>
+      <div class="amount-box">$512.37</div>
+    </div>
+
+    <div class="amount-in-words">
+      Five Hundred Twelve and 37/100
+    </div>
+
+    <div class="memo">
+      <span class="memo-label">Memo</span>
+      <div class="memo-line">Weekly Pay</div>
+    </div>
+
+    <div class="footer">
+      <div class="signature-block">
+        <div class="signature-area">
+           <svg class="signature-svg" viewBox="0 0 260 100">
+            <path fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"
+              d="M 20,70 C 25,25 80,20 70,65 S 90,100 115,65 C 125,40 140,45 150,65 Q 160,85 170,65 C 180,45 200,50 210,70 S 240,90 250,50" />
+          </svg>
+        </div>
+        <div class="signature-line">Authorized Signature</div>
+      </div>
+      <div class="routing-info">
+        <span>&#x2446;</span>*2345678*<span>&#x2446;</span>&nbsp;&nbsp;&nbsp;<span>&#x2447;</span>*00133*<span>&#x2447;</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="print-button" id="print-button" disabled>Copy Paycheck Image</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      function escapeHTML(str) {
+        const p = document.createElement('p');
+        p.textContent = str;
+        return p.innerHTML;
+      }
+      const urlParams = new URLSearchParams(window.location.search);
+      const name = urlParams.get('name');
+      const nameElement = document.getElementById('recipient-name');
+      if (name) {
+        nameElement.innerHTML = escapeHTML(name);
+      } else {
+        nameElement.innerHTML = escapeHTML('Valued Employee');
+      }
+
+      const node = document.getElementById('paycheck-container');
+      setTimeout(() => {
+        html2canvas(node, {
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#fdfaef',
+          scale: window.devicePixelRatio
+        }).then(canvas => {
+          canvas.toBlob(blob => {
+            window.blob = blob;
+            document.getElementById('print-button').disabled = false;
+          }, 'image/png');
+        }).catch(e => {
+            console.error("html2canvas failed:", e);
+            alert('Could not generate paycheck image. See console for details.');
+        });
+      }, 500);
+    });
+
+    document.getElementById('print-button').addEventListener('click', () => {
+      let blob = window.blob;
+      if (!blob) {
+        return alert('Could not convert to blob!');
+      }
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const item = new ClipboardItem({ 'image/png': blob });
+        navigator.clipboard.write([item])
+          .then(() => {
+            alert('✅ Paycheck image copied to clipboard!');
+          })
+          .catch(err => {
+            console.error('Clipboard API error:', err);
+            alert('❌ Copy failed. Your browser might not support this feature or you need to grant permissions. Try taking a screenshot instead.');
+          });
+      } else {
+        alert('❌ Your browser does not support the Clipboard API for images. Please take a screenshot.');
+      }
+    });
+  </script>
+</body>
+</html>
+
