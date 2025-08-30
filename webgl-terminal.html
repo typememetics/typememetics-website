@@ -115,7 +115,7 @@
                 scanStrength: 0.43,      // scanline strength
                 vignette: 0.28,          // vignette strength
                 maskDark: 0.18,          // aperture grill darkening
-                aberration: 0.0034,      // RGB shift
+                aberration: 0.0014,      // RGB shift
                 bloom: 0.16,             // cheap bloom intensity
                 noise: 0.06              // film grain amount
             };
@@ -351,11 +351,52 @@
             window.addEventListener('resize', fit, { passive: true });
             fit();
 
+            // ---- minimal WebAudio + frequency access ----
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const audio = new Audio("https://r2.typememetics.institute/argus%20theme%20-%20remaster%202025-08-17%20-%2020%3A08%3A2025%2C%2013.19.mp3");        // put your file here
+            audio.crossOrigin = "anonymous";            // needed if using a remote URL with CORS
+            const src = ctx.createMediaElementSource(audio);
+
+            const analyser = ctx.createAnalyser();
+            analyser.fftSize = 1024;                    // 512 frequency bins
+            analyser.smoothingTimeConstant = 0.8;       // smooths rapid changes
+
+            src.connect(analyser);
+            analyser.connect(ctx.destination);
+
+            const bins = new Uint8Array(analyser.frequencyBinCount);
+
+            let startedPlaying = false;
+            async function startPlaying() {
+                if (startedPlaying) return;
+                startedPlaying = true;
+
+                await ctx.resume();
+                audio.play();
+            }
+
             // ---------- Render loop ----------
             let start = performance.now();
+            let pulse = 0;
+            let cnt = 0;
             function frame() {
+                analyser.getByteFrequencyData(bins);
+
+                // take the lowest ~10% of bins as "bass"
+                const n = Math.max(1, Math.floor(bins.length * 0.01));
+                let sum = 0;
+                for (let i = 0; i < n; i++) sum += Math.abs(bins[i]);
+                const bass = sum / (n * 255);            // normalize to 0..1
+
+                // low-pass filter to make it stable & beat-like
+                //pulse += (bass - pulse) * 0.8;          // tweak 0.05..0.3 to taste
+                pulse = bass * bass * bass;
+
+                cnt++;
+                if (cnt % 60 == 0) console.log(pulse);
+
                 const t = (performance.now() - start) / 1000;
-                if (dirty) {
+                if (true || dirty) {
                     paintBuffer();
                     gl.bindTexture(gl.TEXTURE_2D, tex);
                     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
@@ -370,9 +411,9 @@
                 gl.uniform1f(U.scan, CRT.scanStrength);
                 gl.uniform1f(U.vign, CRT.vignette);
                 gl.uniform1f(U.maskDark, CRT.maskDark);
-                gl.uniform1f(U.aberr, CRT.aberration);
-                gl.uniform1f(U.bloom, CRT.bloom);
-                gl.uniform1f(U.noise, CRT.noise);
+                gl.uniform1f(U.aberr, CRT.aberration + 0.005 * pulse);
+                gl.uniform1f(U.bloom, CRT.bloom + 0.5 * pulse);
+                gl.uniform1f(U.noise, CRT.noise + 0.3 * pulse);
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, tex);
                 gl.uniform1i(U.tex, 0);
@@ -386,6 +427,7 @@
             // ---------- Input handling ----------
             function focusInput() { hidden.focus({ preventScroll: true }); }
             stage.addEventListener('pointerdown', () => focusInput());
+            window.addEventListener('keydown', async () => { await startPlaying() });
             window.addEventListener('keydown', (e) => {
                 // Shortcuts
                 if (e.ctrlKey && (e.key === 'F' || e.key === 'f')) { toggleFullscreen(); e.preventDefault(); return; }
@@ -444,6 +486,7 @@
             stage.setAttribute('role', 'application');
             stage.setAttribute('aria-roledescription', 'terminal');
             stage.setAttribute('aria-label', 'Emulated CRT terminal; click to focus then type');
+
         })();
     </script>
 </body>
