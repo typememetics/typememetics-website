@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>CRT Terminal (WebGL, fullscreen, cross-browser)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            background: #000;
+            color: #9fe0a6;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+
+        #stage {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: #000;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Top-left HUD */
+        .hud {
+            position: fixed;
+            left: 12px;
+            top: 10px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: rgba(0, 0, 0, .55);
+            backdrop-filter: blur(4px);
+            padding: 6px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .08);
+            user-select: none;
+        }
+
+        .btn {
+            appearance: none;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 8px;
+            padding: 6px 10px;
+            background: #0b0b0b;
+            color: #d7ffe0;
+            cursor: pointer;
+            font: 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+
+        .btn:hover {
+            border-color: rgba(255, 255, 255, .25);
+        }
+
+        .stat {
+            color: #79d98a;
+            font: 12px/1.2 ui-monospace, monospace;
+        }
+
+        /* Hidden textarea for IME/mobile keyboards */
+        #hiddenInput {
+            position: fixed;
+            opacity: 0;
+            pointer-events: none;
+            left: -9999px;
+            top: -9999px;
+        }
+
+        /* Fake fullscreen fallback (when requestFullscreen is unavailable/denied) */
+        .fake-fullscreen {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="stage" aria-label="CRT Terminal">
+        <canvas id="gl"></canvas>
+    </div>
+
+    <div class="hud">
+        <button id="fsBtn" class="btn" title="Toggle fullscreen (F)">⤢ Fullscreen</button>
+        <button id="clrBtn" class="btn" title="Clear terminal (Ctrl+L)">Clear</button>
+        <span class="stat" id="stat"></span>
+    </div>
+
+    <textarea id="hiddenInput" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+
+    <script>
+        (function () {
+            // ---------- Config ----------
+            const COLS = 100, ROWS = 32;             // Terminal grid
+            const FONT_FAMILY = 'IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+            const FONT_SIZE = 18;                     // CSS pixels on the offscreen canvas
+            const LINE_HEIGHT = 1.15;
+            const PADDING = 8;                        // px inner padding around the terminal text canvas
+            const BG = '#001002';                     // terminal background before CRT
+            const FG = '#9FE0A6';                     // terminal foreground text color
+
+            // CRT shader params (tweak to taste)
+            const CRT = {
+                curvature: 0.04,         // barrel distortion amount
+                scanStrength: 0.43,      // scanline strength
+                vignette: 0.28,          // vignette strength
+                maskDark: 0.18,          // aperture grill darkening
+                aberration: 0.0034,      // RGB shift
+                bloom: 0.16,             // cheap bloom intensity
+                noise: 0.06              // film grain amount
+            };
+
+            // ---------- DOM ----------
+            const canvas = document.getElementById('gl');
+            const stage = document.getElementById('stage');
+            const fsBtn = document.getElementById('fsBtn');
+            const clrBtn = document.getElementById('clrBtn');
+            const stat = document.getElementById('stat');
+            const hidden = document.getElementById('hiddenInput');
+
+            // ---------- WebGL init ----------
+            const gl = canvas.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false, powerPreference: 'high-performance' })
+                || canvas.getContext('experimental-webgl');
+            if (!gl) {
+                alert('WebGL not available in this browser.');
+                return;
+            }
+
+            // Fullscreen quad
+            const vbo = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -1, -1, 1, -1, -1, 1, 1, 1
+            ]), gl.STATIC_DRAW);
+
+            const vert = `
+      attribute vec2 a_pos;
+      varying vec2 v_uv;
+      void main() {
+        v_uv = (a_pos * 0.5) + 0.5;
+        gl_Position = vec4(a_pos, 0.0, 1.0);
+      }
+    `;
+            const frag = `
+      precision mediump float;
+      varying vec2 v_uv;
+      uniform sampler2D u_tex;
+      uniform vec2 u_res;     // render resolution (canvas pixels)
+      uniform float u_time;
+      uniform float u_curv;
+      uniform float u_scan;
+      uniform float u_vign;
+      uniform float u_maskDark;
+      uniform float u_aberr;
+      uniform float u_bloom;
+      uniform float u_noise;
+
+      // Barrel distortion
+      vec2 barrel(vec2 uv, float k) {
+        vec2 cc = uv * 2.0 - 1.0;
+        float r2 = dot(cc, cc);
+        cc *= (1.0 + k * r2);
+        return cc * 0.5 + 0.5;
+      }
+
+      // Cheap box blur lookup (for bloom)
+      vec3 cheapBlur(sampler2D tex, vec2 uv, vec2 px) {
+        vec3 s = vec3(0.0);
+        s += texture2D(tex, uv + px * vec2(-1.0, -1.0)).rgb;
+        s += texture2D(tex, uv + px * vec2( 1.0, -1.0)).rgb;
+        s += texture2D(tex, uv + px * vec2(-1.0,  1.0)).rgb;
+        s += texture2D(tex, uv + px * vec2( 1.0,  1.0)).rgb;
+        return s * 0.25;
+      }
+
+      // Aperture mask (RGB triad)
+      float apertureMask(vec2 fragCoord) {
+        float stripe = mod(fragCoord.x, 3.0);
+        float m = 1.0;
+        if (stripe < 1.0) m = 1.0;
+        else if (stripe < 2.0) m = 0.95;
+        else m = 0.9;
+        // Vertical scanlines
+        float scan = 0.5 + 0.5 * sin((fragCoord.y + 0.5) * 3.14159);
+        m *= mix(1.0, scan, 0.15);
+        return m;
+      }
+
+      float rand(vec2 co){ return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453); }
+
+      void main(){
+        vec2 px = 1.0 / u_res;
+
+        // Curvature
+        vec2 uvC = barrel(v_uv, u_curv);
+
+        // Chromatic aberration (tiny channel offsets)
+        vec2 ca = vec2(u_aberr, 0.0);
+        float r = texture2D(u_tex, uvC + ca).r;
+        float g = texture2D(u_tex, uvC).g;
+        float b = texture2D(u_tex, uvC - ca).b;
+        vec3 col = vec3(r,g,b);
+
+        // Scanlines (dependent on physical pixel Y)
+        float scan = 0.75 + 0.25 * sin((gl_FragCoord.y + u_time*60.0) * 3.14159);
+        col *= mix(1.0, scan, u_scan);
+
+        // Cheap bloom
+        vec3 blur = cheapBlur(u_tex, uvC, px * 1.5);
+        col += blur * u_bloom;
+
+        // Vignette
+        vec2 dv = v_uv - 0.5;
+        float vig = 1.0 - dot(dv, dv) * 2.0;
+        col *= mix(1.0, clamp(vig, 0.0, 1.0), u_vign);
+
+        // Aperture mask & slight darkening
+        float mask = apertureMask(gl_FragCoord.xy);
+        col *= mix(1.0, mask, u_maskDark);
+
+        // Film grain
+        col += (rand(gl_FragCoord.xy + u_time) - 0.5) * u_noise;
+
+        // Subtle gamma
+        col = pow(max(col, 0.0), vec3(1.05));
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+            function compile(type, src) {
+                const s = gl.createShader(type);
+                gl.shaderSource(s, src);
+                gl.compileShader(s);
+                if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+                    throw new Error(gl.getShaderInfoLog(s) || 'Shader compile error');
+                }
+                return s;
+            }
+            function link(vs, fs) {
+                const p = gl.createProgram();
+                gl.attachShader(p, vs); gl.attachShader(p, fs);
+                gl.bindAttribLocation(p, 0, 'a_pos');
+                gl.linkProgram(p);
+                if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+                    throw new Error(gl.getProgramInfoLog(p) || 'Link error');
+                }
+                return p;
+            }
+            const prog = link(compile(gl.VERTEX_SHADER, vert), compile(gl.FRAGMENT_SHADER, frag));
+            gl.useProgram(prog);
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+            // Uniforms
+            const U = {
+                tex: gl.getUniformLocation(prog, 'u_tex'),
+                res: gl.getUniformLocation(prog, 'u_res'),
+                time: gl.getUniformLocation(prog, 'u_time'),
+                curv: gl.getUniformLocation(prog, 'u_curv'),
+                scan: gl.getUniformLocation(prog, 'u_scan'),
+                vign: gl.getUniformLocation(prog, 'u_vign'),
+                maskDark: gl.getUniformLocation(prog, 'u_maskDark'),
+                aberr: gl.getUniformLocation(prog, 'u_aberr'),
+                bloom: gl.getUniformLocation(prog, 'u_bloom'),
+                noise: gl.getUniformLocation(prog, 'u_noise')
+            };
+
+            // ---------- Offscreen text canvas ----------
+            const textCanvas = document.createElement('canvas');
+            const tctx = textCanvas.getContext('2d', { alpha: false, willReadFrequently: false });
+            let cellW = 0, cellH = 0, cols = COLS, rows = ROWS;
+            function measureCell() {
+                tctx.font = `${FONT_SIZE}px ${FONT_FAMILY}`;
+                const metrics = tctx.measureText('M');
+                cellH = Math.ceil(FONT_SIZE * LINE_HEIGHT);
+                cellW = Math.ceil(metrics.width);
+            }
+            measureCell();
+            textCanvas.width = PADDING * 2 + cellW * cols;
+            textCanvas.height = PADDING * 2 + cellH * rows;
+
+            // Terminal buffer (simple)
+            const buffer = Array.from({ length: rows }, _ => new Array(cols).fill(' '));
+            let cx = 0, cy = 0;
+            function write(s) { for (const ch of s) putChar(ch); dirty = true; }
+            function putChar(ch) {
+                if (ch === '\n') { cx = 0; cy++; scrollIfNeeded(); return; }
+                if (ch === '\r') { cx = 0; return; }
+                if (ch === '\b') { if (cx > 0) { cx--; buffer[cy][cx] = ' '; } return; }
+                buffer[cy][cx] = ch;
+                cx++;
+                if (cx >= cols) { cx = 0; cy++; scrollIfNeeded(); }
+            }
+            function scrollIfNeeded() {
+                if (cy >= rows) {
+                    buffer.shift();
+                    buffer.push(new Array(cols).fill(' '));
+                    cy = rows - 1;
+                }
+            }
+            function clearTerm() {
+                for (let r = 0; r < rows; r++) buffer[r].fill(' ');
+                cx = 0; cy = 0; dirty = true;
+            }
+
+            // Draw buffer -> textCanvas
+            function paintBuffer() {
+                tctx.fillStyle = BG; tctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+                tctx.font = `${FONT_SIZE}px ${FONT_FAMILY}`;
+                tctx.textBaseline = 'top';
+                tctx.fillStyle = FG;
+                const x0 = PADDING, y0 = PADDING;
+                for (let r = 0; r < rows; r++) {
+                    const line = buffer[r].join('');
+                    tctx.fillText(line, x0, y0 + r * cellH);
+                }
+            }
+
+            // ---------- GL texture from text canvas ----------
+            const tex = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            let dirty = true;
+
+            // ---------- Resize / DPR ----------
+            function fit() {
+                const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+                const w = Math.floor(stage.clientWidth * dpr);
+                const h = Math.floor(stage.clientHeight * dpr);
+                if (canvas.width !== w || canvas.height !== h) {
+                    canvas.width = w; canvas.height = h;
+                    gl.viewport(0, 0, w, h);
+                }
+                gl.useProgram(prog);
+                gl.uniform2f(U.res, canvas.width, canvas.height);
+            }
+            window.addEventListener('resize', fit, { passive: true });
+            fit();
+
+            // ---------- Render loop ----------
+            let start = performance.now();
+            function frame() {
+                const t = (performance.now() - start) / 1000;
+                if (dirty) {
+                    paintBuffer();
+                    gl.bindTexture(gl.TEXTURE_2D, tex);
+                    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
+                    dirty = false;
+                }
+
+                gl.useProgram(prog);
+                gl.uniform1f(U.time, t);
+                gl.uniform1f(U.curv, CRT.curvature);
+                gl.uniform1f(U.scan, CRT.scanStrength);
+                gl.uniform1f(U.vign, CRT.vignette);
+                gl.uniform1f(U.maskDark, CRT.maskDark);
+                gl.uniform1f(U.aberr, CRT.aberration);
+                gl.uniform1f(U.bloom, CRT.bloom);
+                gl.uniform1f(U.noise, CRT.noise);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, tex);
+                gl.uniform1i(U.tex, 0);
+
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+                requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+
+            // ---------- Input handling ----------
+            function focusInput() { hidden.focus({ preventScroll: true }); }
+            stage.addEventListener('pointerdown', () => focusInput());
+            window.addEventListener('keydown', (e) => {
+                // Shortcuts
+                if (e.ctrlKey && (e.key === 'F' || e.key === 'f')) { toggleFullscreen(); e.preventDefault(); return; }
+                if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) { clearTerm(); e.preventDefault(); return; }
+                // Basic terminal typing
+                if (e.key === 'Backspace') { putChar('\b'); dirty = true; e.preventDefault(); }
+                else if (e.key === 'Enter') { putChar('\n'); dirty = true; e.preventDefault(); }
+                else if (e.key.length === 1 && !e.metaKey) { putChar(e.key); dirty = true; e.preventDefault(); }
+            });
+
+            // IME/mobile: capture via textarea 'input'
+            hidden.addEventListener('input', (e) => {
+                const val = hidden.value;
+                if (val) { write(val); hidden.value = ''; }
+            });
+
+            // ---------- Demo banner ----------
+            function banner() {
+                clearTerm();
+                write("webgl-crt-terminal — ready\n");
+                write("\nType here. Shortcuts: Ctrl+F=fullscreen, Ctrl+L=clear\n");
+                write("\n$ echo \"hello world\"\nhello world\n");
+            }
+            banner();
+
+            // ---------- Fullscreen ----------
+            let fakeFS = false;
+            async function toggleFullscreen() {
+                const el = document.documentElement;
+                try {
+                    if (!document.fullscreenElement && el.requestFullscreen) {
+                        await el.requestFullscreen({ navigationUI: 'hide' });
+                        stage.classList.remove('fake-fullscreen');
+                    } else if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    }
+                } catch (err) {
+                    // Fall back if denied/unavailable
+                    fakeFS = !fakeFS;
+                    stage.classList.toggle('fake-fullscreen', fakeFS);
+                }
+                fit(); focusInput();
+            }
+            fsBtn.addEventListener('click', toggleFullscreen);
+            clrBtn.addEventListener('click', () => { clearTerm(); focusInput(); });
+
+            // ---------- Status ----------
+            function updateStat() {
+                const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100;
+                stat.textContent = `DPR ${dpr} · ${canvas.width}×${canvas.height}`;
+                requestAnimationFrame(updateStat);
+            }
+            updateStat();
+
+            // ---------- Accessibility fallback (optional) ----------
+            stage.setAttribute('role', 'application');
+            stage.setAttribute('aria-roledescription', 'terminal');
+            stage.setAttribute('aria-label', 'Emulated CRT terminal; click to focus then type');
+        })();
+    </script>
+</body>
+
+</html>
