@@ -353,7 +353,7 @@
 
             // ---- minimal WebAudio + frequency access ----
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const audio = new Audio("https://r2.typememetics.institute/argus%20theme%20-%20remaster%202025-08-17%20-%2020%3A08%3A2025%2C%2013.19.mp3");        // put your file here
+            const audio = new Audio("https://r2.typememetics.institute/argus%20theme%20-%20remaster%202025-08-17%20-%2020%3A08%3A2025%2C%2013.19.mp3?v=42");        // put your file here
             audio.crossOrigin = "anonymous";            // needed if using a remote URL with CORS
             const src = ctx.createMediaElementSource(audio);
 
