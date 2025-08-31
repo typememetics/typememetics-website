@@ -68,9 +68,16 @@
     .glitch {
       animation: glitch 0.3s linear;
     }
+    #fx {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 10; pointer-events: none;
+      mix-blend-mode: hard-light; /* tweak in JS if desired */
+      opacity: 0.6;            /* tweak in JS if desired */
+    }
   </style>
 </head>
 <body>
+  <canvas id="fx"></canvas>
   <div id="terminal"></div>
   <svg xmlns="http://www.w3.org/2000/svg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none;">
     <defs>
@@ -305,6 +312,153 @@ The eyes are op
       }, 1000 + Math.random() * 10000);
     }
     scheduleRoll();
+
+    // WebGL music-based fancy FX
+    function setupFx() {
+      const CONFIG = {
+        blendMode: 'hard-light',
+        opacity: 0.65,
+        maxDistort: 10,
+        bassCutoffHz: 180,
+        smoothing: 0.85
+      };
+      const canvas = document.getElementById('fx');
+      const gl = canvas.getContext('webgl', {
+        alpha: true, premultipliedAlpha: true, antialias: true,
+        depth: false, stencil: false, preserveDrawingBuffer: false
+      });
+      if (!gl) { console.error('WebGL not supported'); return; }
+
+      function sizeToDisplay() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = Math.max(1, Math.floor(window.innerWidth * dpr));
+        const h = Math.max(1, Math.floor(window.innerHeight * dpr));
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h);
+        }
+      }
+      canvas.style.mixBlendMode = CONFIG.blendMode;
+      canvas.style.opacity = CONFIG.opacity;
+
+      const ro = new ResizeObserver(sizeToDisplay);
+      ro.observe(document.body);
+      window.addEventListener('resize', sizeToDisplay);
+      sizeToDisplay();
+
+      const vs = `
+        attribute vec2 position;
+        void main(){ gl_Position = vec4(position, 0.0, 1.0); }
+      `;
+      const fs = `
+        precision mediump float;
+        uniform vec2 uResolution; // canvas size in pixels
+        uniform float uTime;      // seconds
+        uniform float uLevel;     // 0..1 beat level (smoothed)
+        uniform float uSeed;      // random seed per page load
+
+        float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
+        float noise(vec2 p){
+          vec2 i = floor(p); vec2 f = fract(p);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0,0.0));
+          float c = hash(i + vec2(0.0,1.0));
+          float d = hash(i + vec2(1.0,1.0));
+          vec2 u = f*f*(3.0-2.0*f);
+          return mix(a,b,u.x) + (c - a)*u.y*(1.0 - u.x) + (d - b)*u.x*u.y;
+        }
+
+        void main(){
+          vec2 res = uResolution;
+          vec2 uv = gl_FragCoord.xy / res;           // 0..1
+          vec2 cuv = uv - 0.5;                        // centered
+          cuv.x *= res.x / res.y;                     // aspect-corrected
+
+          float r = length(cuv);
+          // Base vignette that swells with the beat
+          float vign = smoothstep(0.92 - 0.25*uLevel, 0.33, r);
+
+          // Scan glow (two frequencies)
+          float scan1 = 0.5 + 0.5 * sin(uv.y * res.y * 3.14159 + uTime * 60.0);
+          float scan2 = 0.5 + 0.5 * sin(uv.y * res.y * 6.28318 * 0.25 + uTime * 10.0);
+
+          // Rolling horizontal band, beat-amplified
+          float band = 0.2 * uLevel * smoothstep(0.0, 1.0, sin(uTime*0.5 + uv.y*6.28318));
+
+          // Random sparkle
+          float n = noise(uv * vec2(res.x*0.02, res.y*0.07) + uTime + uSeed);
+          float sparkle = smoothstep(0.86, 1.0, n) * (0.3 + 0.7*uLevel);
+
+          // Flyback flash at the far right
+          float fly = smoothstep(0.965, 1.0, uv.x) * (0.2 + 0.8*uLevel);
+
+          // Combine into alpha
+          float a = clamp(0.25*vign + 0.15*scan1 + 0.22*scan2 + band + sparkle + fly, 0.0, 1.0);
+
+          // Slight greenish tint that brightens with level (works well with mix-blend-mode: screen)
+          vec3 col = vec3(0.1, 0.2, 0.1) * (0.45 + 0.55*uLevel);
+          gl_FragColor = vec4(col, a);
+        }
+      `;
+
+      function compileShader(type, src){
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src); gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+          console.error(gl.getShaderInfoLog(s));
+        }
+        return s;
+      }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, compileShader(gl.VERTEX_SHADER, vs));
+      gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(prog));
+      }
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        -1, -1,
+        3, -1,
+        -1,  3
+      ]), gl.STATIC_DRAW);
+
+      const aPos = gl.getAttribLocation(prog, 'position');
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+      const uRes   = gl.getUniformLocation(prog, 'uResolution');
+      const uTime  = gl.getUniformLocation(prog, 'uTime');
+      const uLevel = gl.getUniformLocation(prog, 'uLevel');
+      const uSeed  = gl.getUniformLocation(prog, 'uSeed');
+
+      gl.clearColor(0,0,0,0);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+      const state = { level: 0, ema: 0, t0: performance.now(), seed: Math.random()*1000, raf: 0 };
+      function frame(t){
+        sizeToDisplay();
+        const time = (t - state.t0) / 1000;
+        const lvl = Math.random(1) * Math.pow(Math.sin(t/100), 4);
+        state.level = state.level*0.8 + lvl*0.2;
+
+        gl.viewport(0,0,canvas.width, canvas.height);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.uniform1f(uTime, time);
+        gl.uniform1f(uLevel, state.level);
+        gl.uniform1f(uSeed, state.seed);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        state.raf = requestAnimationFrame(frame);
+      }
+
+      state.raf = requestAnimationFrame(frame);
+    }
+    setupFx();
   </script>
 </body>
 </html>
