@@ -1,0 +1,499 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>ITSMR :: ffmpeg-rs Fundraising Initiative</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 30px;
+  background-color: #808080;
+  border: 2px solid #000000;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #00FF00;
+  width: 64.9%;
+  transition: width 0.3s ease;
+}
+
+.donor-card {
+  background-color: #e8e8e8;
+  border: 1px solid #808080;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.donor-card:hover {
+  background-color: #d0d0d0;
+  border-color: #0000FF;
+}
+
+.amount {
+  color: #008000;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+.donor-name {
+  font-weight: bold;
+  color: #000080;
+}
+
+.donor-message {
+  font-style: italic;
+  color: #404040;
+  font-size: 9pt;
+}
+
+.donor-time {
+  font-size: 8pt;
+  color: #808080;
+}
+
+.scrollbox {
+  height: 600px;
+  overflow-y: scroll;
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  padding: 10px;
+}
+
+.button {
+  background-color: #c0c0c0;
+  border: 2px outset #ffffff;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
+
+.button:hover {
+  background-color: #a0a0a0;
+}
+
+.button:active {
+  border-style: inset;
+}
+
+.button-selected {
+  background-color: #0000FF;
+  color: #FFFFFF;
+  border: 2px inset #000080;
+}
+
+input[type="text"] {
+  font-family: "Courier New", Courier, monospace;
+  padding: 4px;
+  border: 2px inset #808080;
+  background-color: #ffffff;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #000000;
+  background-color: #c0c0c0;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+</style>
+</head>
+
+<body bgcolor="#f0f0f0" text="#000000" link="#0000FF" vlink="#800080">
+
+<table border="0" width="100%" cellpadding="10" cellspacing="0">
+<tr>
+  <td width="180" valign="top" bgcolor="#c0c0c0">
+    <center>
+      <a href="index.html"><img src="images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
+    </center>
+    <hr>
+    <b><u>I.T.S.M.R. Network</u></b>
+    <br>
+    <font size="-1">Secure Access Portal</font>
+    <hr>
+    <a href="index.html">Home</a><br>
+    <a href="directory.html">Directory</a><br>
+    <a href="incidents.html">Incidents</a><br>
+    <a href="cognitive-assessment/">Assessment</a><br>
+    <br>
+    <hr>
+    <b><font color="red">FUNDRAISING</font></b><br>
+    <a href="ffmpeg-rs-fundraiser.html">ffmpeg-rs</a>
+    <hr>
+  </td>
+
+  <td valign="top">
+    <center>
+      <h1><font color="#FF0000">ff</font><font color="#00FF00">m</font><font color="#0000FF">p</font><font color="#FFFF00">e</font><font color="#FF00FF">g</font><font color="#00FFFF">-</font><font color="#FF8000">r</font><font color="#8000FF">s</font></h1>
+      <h3><i>Rewriting FFmpeg in Rust :: A Type-Safe Future for Multimedia</i></h3>
+    </center>
+    <hr size="4">
+
+    <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#e8e8e8">
+      <tr>
+        <td>
+          <center>
+            <table border="0" cellpadding="5">
+              <tr>
+                <td bgcolor="#c0c0c0" align="center" width="80">
+                  <font size="+3" color="#FF0000"><b>RS</b></font>
+                </td>
+                <td>
+                  <b><font size="+1">OFFICIAL INSTITUTE FUNDRAISING INITIATIVE</font></b><br>
+                  <font size="-1">Authorized by ITSMR Directive 2025-RUST-01</font>
+                </td>
+              </tr>
+            </table>
+          </center>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+      <tr>
+        <td>
+          <center><b><u>FUNDING PROGRESS</u></b></center>
+          <br>
+          <table border="0" width="100%">
+            <tr>
+              <td>
+                <font size="+2" color="#008000"><b>$32,450</b></font> <font size="-1">raised of <b>$50,000</b> goal</font>
+              </td>
+            </tr>
+          </table>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+          <br>
+          <table border="1" width="100%" cellpadding="5" cellspacing="0">
+            <tr bgcolor="#c0c0c0">
+              <th>Backers</th>
+              <th>Percentage Funded</th>
+            </tr>
+            <tr align="center">
+              <td><font size="+2"><b>127</b></font></td>
+              <td><font size="+2"><b>65%</b></font></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <table border="0" width="100%" cellpadding="0" cellspacing="10">
+      <tr valign="top">
+        <td width="65%">
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffcc">
+            <tr>
+              <td>
+                <center><b><u>SUPPORT THIS PROJECT</u></b></center>
+                <br>
+                <form action="#" method="post">
+                  <b>Select Amount:</b><br><br>
+                  <table border="0" cellpadding="5" cellspacing="5">
+                    <tr>
+                      <td><button type="button" class="button" onclick="selectAmount(10)">$10</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(25)">$25</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(50)">$50</button></td>
+                    </tr>
+                    <tr>
+                      <td><button type="button" class="button" onclick="selectAmount(100)">$100</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(250)">$250</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(500)">$500</button></td>
+                    </tr>
+                  </table>
+                  <br>
+                  <b>Or Enter Custom Amount:</b><br>
+                  $ <input type="text" name="custom_amount" id="custom_amount" size="10" value="">
+                  <br><br>
+                  <center>
+                    <input type="submit" value="CONTINUE TO PAYMENT &gt;&gt;" class="button" style="font-size: 12pt; padding: 10px 20px;">
+                  </center>
+                  <br>
+                  <font size="-1"><i>Secure payment processing. Your contribution helps build the future of video processing.</i></font>
+                </form>
+              </td>
+            </tr>
+          </table>
+
+          <br>
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+            <tr>
+              <td>
+                <b><u>ABOUT THE PROJECT</u></b>
+                <p>
+                  FFmpeg is the backbone of modern video processing, powering everything from streaming platforms to video editing software. However, its C codebase presents challenges in memory safety, concurrency, and maintainability.
+                </p>
+                <p>
+                  <b>ffmpeg-rs</b> aims to rewrite FFmpeg in Rust, bringing memory safety, fearless concurrency, and modern tooling to the world's most important multimedia framework.
+                </p>
+                <p>
+                  This ambitious project will ensure the next generation of video processing is faster, safer, and more reliable.
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <br>
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#e8f4ff">
+            <tr>
+              <td>
+                <b><u>WHY RUST?</u></b>
+                <ul>
+                  <li><b>Memory Safety:</b> Eliminate entire classes of bugs that plague C codebases</li>
+                  <li><b>Performance:</b> Zero-cost abstractions with C-level performance</li>
+                  <li><b>Concurrency:</b> Fearless parallel processing for modern hardware</li>
+                  <li><b>Maintainability:</b> Modern tooling and package management</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+
+          <br>
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffe8e8">
+            <tr>
+              <td>
+                <b><u>FUNDING GOALS</u></b>
+                <br><br>
+                <table border="1" width="100%" cellpadding="8" cellspacing="0">
+                  <tr bgcolor="#c0ffc0">
+                    <td><b>$50,000</b></td>
+                    <td><b>Phase 1: Core Architecture</b><br>
+                    <font size="-1">Foundation, codec framework, and basic video processing</font></td>
+                  </tr>
+                  <tr bgcolor="#e0e0e0">
+                    <td><b>$150,000</b></td>
+                    <td><b>Phase 2: Codec Implementation</b><br>
+                    <font size="-1">H.264, H.265, VP9, and AV1 support</font></td>
+                  </tr>
+                  <tr bgcolor="#e0e0e0">
+                    <td><b>$300,000</b></td>
+                    <td><b>Phase 3: Full Feature Parity</b><br>
+                    <font size="-1">Complete FFmpeg compatibility and optimization</font></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+
+        <!-- RIGHT COLUMN: DONOR SIDEBAR -->
+        <td width="35%">
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+            <tr bgcolor="#c0c0c0">
+              <td>
+                <center><b>RECENT BACKERS</b></center>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <font size="-1">127 recent contributions</font>
+                <hr>
+                <div class="scrollbox">
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="SC">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Sarah Chen</span>
+                          <span class="amount">$500</span>
+                          <br>
+                          <span class="donor-message">"Rust is the future! Excited to see this project come to life."</span>
+                          <br>
+                          <span class="donor-time">2 hours ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="AR">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Alex Rodriguez</span>
+                          <span class="amount">$250</span>
+                          <br>
+                          <span class="donor-message">"Memory safety in video processing is crucial. Great initiative!"</span>
+                          <br>
+                          <span class="donor-time">5 hours ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="JP">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Jamie Park</span>
+                          <span class="amount">$100</span>
+                          <br>
+                          <span class="donor-message">"Been waiting for this. FFmpeg in Rust will be game-changing."</span>
+                          <br>
+                          <span class="donor-time">8 hours ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="MT">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Morgan Taylor</span>
+                          <span class="amount">$1,000</span>
+                          <br>
+                          <span class="donor-message">"Our company relies on FFmpeg. Happy to support a safer implementation."</span>
+                          <br>
+                          <span class="donor-time">12 hours ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="CW">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Casey Williams</span>
+                          <span class="amount">$50</span>
+                          <br>
+                          <span class="donor-message">"Small contribution but big support for Rust ecosystem!"</span>
+                          <br>
+                          <span class="donor-time">1 day ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="RK">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">River Kim</span>
+                          <span class="amount">$150</span>
+                          <br>
+                          <span class="donor-message">"This will revolutionize video processing. Count me in!"</span>
+                          <br>
+                          <span class="donor-time">1 day ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="JL">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Jordan Lee</span>
+                          <span class="amount">$75</span>
+                          <br>
+                          <span class="donor-message">"Rust + FFmpeg = Perfect match. Good luck team!"</span>
+                          <br>
+                          <span class="donor-time">2 days ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="donor-card">
+                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50" valign="top">
+                          <div class="avatar">
+                            <img src="" width="40" height="40" alt="TS">
+                          </div>
+                        </td>
+                        <td valign="top">
+                          <span class="donor-name">Taylor Swift</span>
+                          <span class="amount">$200</span>
+                          <br>
+                          <span class="donor-message">"Performance and safety together. This is what we need."</span>
+                          <br>
+                          <span class="donor-time">2 days ago</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <hr size="4">
+    <center>
+      <font size="-1">
+        &copy; 2025 ITSMR ffmpeg-rs Initiative. All contributions are final and non-refundable.
+        <br>
+        This page is compliant with HTML 3.2. For optimal viewing, use Netscape Navigator 3.0 or higher.
+      </font>
+    </center>
+  </td>
+</tr>
+</table>
+
+<script>
+function selectAmount(amount) {
+  document.getElementById('custom_amount').value = '';
+  alert('Selected amount: $' + amount + '\n\nClick "CONTINUE TO PAYMENT" to proceed.');
+}
+</script>
+
+</body>
+</html>
+
