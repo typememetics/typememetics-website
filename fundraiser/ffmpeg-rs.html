@@ -104,6 +104,55 @@ input[type="text"] {
   vertical-align: middle;
   margin-right: 10px;
 }
+
+.login-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0f0f0;
+  border: 4px outset #ffffff;
+  padding: 20px;
+  width: 400px;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 11pt;
+  cursor: pointer;
+  border: 2px outset #ffffff;
+  background-color: #c0c0c0;
+  font-family: "Courier New", Courier, monospace;
+  text-align: left;
+}
+
+.login-button:hover {
+  background-color: #a0a0a0;
+}
+
+.bluesky-btn {
+  background-color: #1185fe;
+  color: white;
+}
+
+.twitter-btn {
+  background-color: #1DA1F2;
+  color: white;
+}
 </style>
 </head>
 
@@ -134,31 +183,9 @@ input[type="text"] {
   <td valign="top">
     <center>
       <h1><font color="#FF0000">ff</font><font color="#00FF00">m</font><font color="#0000FF">p</font><font color="#FFFF00">e</font><font color="#FF00FF">g</font><font color="#00FFFF">-</font><font color="#FF8000">r</font><font color="#8000FF">s</font></h1>
-      <h3><i>Rewriting FFmpeg in Rust :: A Type-Safe Future for Multimedia</i></h3>
+      <h3><i>Containment Protocol for Multimedia Infrastructure :: Eliminating C from the Video Processing Supply Chain</i></h3>
     </center>
     <hr size="4">
-
-    <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#e8e8e8">
-      <tr>
-        <td>
-          <center>
-            <table border="0" cellpadding="5">
-              <tr>
-                <td bgcolor="#c0c0c0" align="center" width="80">
-                  <font size="+3" color="#FF0000"><b>RS</b></font>
-                </td>
-                <td>
-                  <b><font size="+1">OFFICIAL INSTITUTE FUNDRAISING INITIATIVE</font></b><br>
-                  <font size="-1">Authorized by ITSMR Directive 2025-RUST-01</font>
-                </td>
-              </tr>
-            </table>
-          </center>
-        </td>
-      </tr>
-    </table>
-
-    <br>
 
     <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff" id="funding-progress-table">
       <tr>
@@ -202,10 +229,10 @@ input[type="text"] {
                   $ <input type="text" name="custom_amount" id="custom_amount" size="10" value="">
                   <br><br>
                   <center>
-                    <input type="submit" value="CONTINUE TO PAYMENT &gt;&gt;" class="button" style="font-size: 12pt; padding: 10px 20px;">
+                    <button type="button" onclick="showLogin()" class="button" style="font-size: 12pt; padding: 10px 20px;">CONTINUE TO PAYMENT &gt;&gt;</button>
                   </center>
                   <br>
-                  <font size="-1"><i>Secure payment processing. Your contribution helps build the future of video processing.</i></font>
+                  <font size="-1"><i>Secure payment processing. Your contribution helps eradicate undefined behavior from critical infrastructure.</i></font>
                 </form>
               </td>
             </tr>
@@ -218,13 +245,16 @@ input[type="text"] {
               <td>
                 <b><u>ABOUT THE PROJECT</u></b>
                 <p>
-                  FFmpeg is the backbone of modern video processing, powering everything from streaming platforms to video editing software. However, its C codebase presents challenges in memory safety, concurrency, and maintainability.
+                  FFmpeg processes billions of video frames daily across the internet's critical infrastructure. Yet it remains written in <font color="#FF0000"><b>C</b></font> - a language from 1972 that treats memory safety as optional, undefined behavior as <i>acceptable</i>, and buffer overflows as <i>your problem</i>.
                 </p>
                 <p>
-                  <b>ffmpeg-rs</b> aims to rewrite FFmpeg in Rust, bringing memory safety, fearless concurrency, and modern tooling to the world's most important multimedia framework.
+                  Every frame processed by FFmpeg's C codebase is a roll of the dice. Use-after-free? Null pointer dereference? Data race? The compiler shrugs. The runtime shrugs. <i>The universe itself is indifferent to your segfault.</i>
                 </p>
                 <p>
-                  This ambitious project will ensure the next generation of video processing is faster, safer, and more reliable.
+                  <b>ffmpeg-rs</b> is not an enhancement. It is <b>containment protocol</b>. By rewriting FFmpeg in Rust, we eliminate entire classes of memory corruption, race conditions, and undefined behavior that C treats as "developer responsibility" - a responsibility developers have <i>catastrophically failed</i> to uphold for five decades.
+                </p>
+                <p>
+                  <font color="#0000FF"><b>Type safety is not negotiable. Memory safety is not optional. The age of C must end.</b></font>
                 </p>
               </td>
             </tr>
@@ -235,13 +265,15 @@ input[type="text"] {
           <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#e8f4ff">
             <tr>
               <td>
-                <b><u>WHY RUST?</u></b>
+                <b><u>WHY RUST? (OR: WHY NOT C?)</u></b>
                 <ul>
-                  <li><b>Memory Safety:</b> Eliminate entire classes of bugs that plague C codebases</li>
-                  <li><b>Performance:</b> Zero-cost abstractions with C-level performance</li>
-                  <li><b>Concurrency:</b> Fearless parallel processing for modern hardware</li>
-                  <li><b>Maintainability:</b> Modern tooling and package management</li>
+                  <li><b>Memory Safety Without Runtime Cost:</b> The borrow checker <i>proves</i> safety at compile-time. C's malloc/free dance is a memetic hazard - every pointer is Schrödinger's dangling reference until runtime observation collapses it into a segfault.</li>
+                  <li><b>Elimination of Undefined Behavior:</b> C's spec contains the phrase "undefined behavior" 191 times. This is not a feature. This is an admission of conceptual bankruptcy. Rust has <i>zero tolerance</i> for UB.</li>
+                  <li><b>Fearless Concurrency:</b> C threads + shared mutable state = cognitive DoS attack on future maintainers. Rust's type system makes data races <i>impossible to compile</i>. Not "hard to write" - <b>impossible</b>.</li>
+                  <li><b>Modern Tooling:</b> Cargo vs. autoconf/make is the difference between a sterile surgical suite and a 1970s field hospital. One prevents infection. The other <i>is</i> the infection.</li>
+                  <li><b>Type-Driven Development:</b> C's type system is a polite suggestion. Rust's type system is an <i>enforced containment protocol</i> for logical consistency.</li>
                 </ul>
+                <p><font size="-1"><i>C was a miracle in 1972. It is a liability in 2025. The Institute does not tolerate liabilities.</i></font></p>
               </td>
             </tr>
           </table>
@@ -251,25 +283,27 @@ input[type="text"] {
           <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffe8e8">
             <tr>
               <td>
-                <b><u>FUNDING GOALS</u></b>
+                <b><u>CONTAINMENT MILESTONES</u></b>
                 <br><br>
                 <table border="1" width="100%" cellpadding="8" cellspacing="0">
                   <tr bgcolor="#c0ffc0">
                     <td><b>$50,000</b></td>
-                    <td><b>Phase 1: Core Architecture</b><br>
-                    <font size="-1">Foundation, codec framework, and basic video processing</font></td>
+                    <td><b>Phase 1: Initial Quarantine</b><br>
+                    <font size="-1">Replace malloc/free with ownership semantics. Eliminate null pointers. Codec framework with guarantees C will never provide.</font></td>
                   </tr>
                   <tr bgcolor="#e0e0e0">
                     <td><b>$150,000</b></td>
-                    <td><b>Phase 2: Codec Implementation</b><br>
-                    <font size="-1">H.264, H.265, VP9, and AV1 support</font></td>
+                    <td><b>Phase 2: Active Decontamination</b><br>
+                    <font size="-1">H.264, H.265, VP9, AV1 rewritten. Zero undefined behavior. Zero buffer overflows. Zero data races. The age of "it works on my machine" ends.</font></td>
                   </tr>
                   <tr bgcolor="#e0e0e0">
                     <td><b>$300,000</b></td>
-                    <td><b>Phase 3: Full Feature Parity</b><br>
-                    <font size="-1">Complete FFmpeg compatibility and optimization</font></td>
+                    <td><b>Phase 3: Complete Eradication</b><br>
+                    <font size="-1">Full FFmpeg parity without the vulnerabilities, memory leaks, or race conditions. C's experiment in "trusting developers" is over.</font></td>
                   </tr>
                 </table>
+                <br>
+                <p><font size="-1" color="#FF0000"><b>WARNING:</b> Every day FFmpeg remains in C is another CVE waiting to happen. <i>The threat is active. The containment is urgent.</i></font></p>
               </td>
             </tr>
           </table>
@@ -312,10 +346,66 @@ input[type="text"] {
 </tr>
 </table>
 
+<div id="loginModal" class="login-modal">
+  <div class="login-box">
+    <center>
+      <h2><u>SECURE LOGIN REQUIRED</u></h2>
+      <p><font size="-1">To process your payment, please authenticate your identity using one of the following services:</font></p>
+    </center>
+    <hr>
+    <br>
+    <button class="login-button bluesky-btn" onclick="attemptLogin('bluesky')" id="bluesky-btn">
+      <b>&#x2601; Login with Bluesky</b>
+    </button>
+    <button class="login-button twitter-btn" onclick="attemptLogin('twitter')" id="twitter-btn">
+      <b>&#x1F426; Login with Twitter</b>
+    </button>
+    <div id="loading-status" style="display: none; text-align: center; margin-top: 15px;">
+      <font color="#0000FF"><b>● Authenticating...</b></font>
+    </div>
+    <br>
+    <hr>
+    <center>
+      <button class="button" onclick="closeLogin()" style="margin-top: 10px;">CANCEL</button>
+    </center>
+    <br>
+    <center><font size="-2" color="#808080">Secure OAuth 2.0 authentication</font></center>
+  </div>
+</div>
+
 <script>
 function selectAmount(amount) {
   document.getElementById('custom_amount').value = '';
   alert('Selected amount: $' + amount + '\n\nClick "CONTINUE TO PAYMENT" to proceed.');
+}
+
+function showLogin() {
+  document.getElementById('loginModal').style.display = 'block';
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').style.display = 'none';
+}
+
+function attemptLogin(provider) {
+  document.getElementById('bluesky-btn').disabled = true;
+  document.getElementById('twitter-btn').disabled = true;
+  document.getElementById('bluesky-btn').style.opacity = '0.5';
+  document.getElementById('twitter-btn').style.opacity = '0.5';
+  
+  const loadingStatus = document.getElementById('loading-status');
+  loadingStatus.style.display = 'block';
+  
+  let dots = 0;
+  const loadingInterval = setInterval(function() {
+    dots = (dots + 1) % 4;
+    loadingStatus.innerHTML = '<font color="#0000FF"><b>● Authenticating' + '.'.repeat(dots) + '</b></font>';
+  }, 500);
+  
+  setTimeout(function() {
+    clearInterval(loadingInterval);
+    window.location.href = 'payment-error.html';
+  }, 5000);
 }
 
 // Load funding progress from API
