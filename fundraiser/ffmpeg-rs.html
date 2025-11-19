@@ -113,17 +113,17 @@ input[type="text"] {
 <tr>
   <td width="180" valign="top" bgcolor="#c0c0c0">
     <center>
-      <a href="index.html"><img src="images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
+      <a href="../index.html"><img src="../images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
     </center>
     <hr>
     <b><u>I.T.S.M.R. Network</u></b>
     <br>
     <font size="-1">Secure Access Portal</font>
     <hr>
-    <a href="index.html">Home</a><br>
-    <a href="directory.html">Directory</a><br>
-    <a href="incidents.html">Incidents</a><br>
-    <a href="cognitive-assessment/">Assessment</a><br>
+    <a href="../index.html">Home</a><br>
+    <a href="../directory.html">Directory</a><br>
+    <a href="../incidents.html">Incidents</a><br>
+    <a href="../cognitive-assessment/">Assessment</a><br>
     <br>
     <hr>
     <b><font color="red">FUNDRAISING</font></b><br>
@@ -160,32 +160,14 @@ input[type="text"] {
 
     <br>
 
-    <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+    <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff" id="funding-progress-table">
       <tr>
         <td>
           <center><b><u>FUNDING PROGRESS</u></b></center>
           <br>
-          <table border="0" width="100%">
-            <tr>
-              <td>
-                <font size="+2" color="#008000"><b>$32,450</b></font> <font size="-1">raised of <b>$50,000</b> goal</font>
-              </td>
-            </tr>
-          </table>
-          <div class="progress-bar">
-            <div class="progress-fill"></div>
+          <div style="text-align: center; padding: 20px; color: #808080;">
+            Loading funding progress...
           </div>
-          <br>
-          <table border="1" width="100%" cellpadding="5" cellspacing="0">
-            <tr bgcolor="#c0c0c0">
-              <th>Backers</th>
-              <th>Percentage Funded</th>
-            </tr>
-            <tr align="center">
-              <td><font size="+2"><b>127</b></font></td>
-              <td><font size="+2"><b>65%</b></font></td>
-            </tr>
-          </table>
         </td>
       </tr>
     </table>
@@ -304,169 +286,12 @@ input[type="text"] {
             </tr>
             <tr>
               <td>
-                <font size="-1">127 recent contributions</font>
+                <font size="-1" id="donor-count">Loading contributions...</font>
                 <hr>
-                <div class="scrollbox">
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="SC">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Sarah Chen</span>
-                          <span class="amount">$500</span>
-                          <br>
-                          <span class="donor-message">"Rust is the future! Excited to see this project come to life."</span>
-                          <br>
-                          <span class="donor-time">2 hours ago</span>
-                        </td>
-                      </tr>
-                    </table>
+                <div class="scrollbox" id="donor-list">
+                  <div style="text-align: center; padding: 20px; color: #808080;">
+                    Loading donors...
                   </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="AR">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Alex Rodriguez</span>
-                          <span class="amount">$250</span>
-                          <br>
-                          <span class="donor-message">"Memory safety in video processing is crucial. Great initiative!"</span>
-                          <br>
-                          <span class="donor-time">5 hours ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="JP">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Jamie Park</span>
-                          <span class="amount">$100</span>
-                          <br>
-                          <span class="donor-message">"Been waiting for this. FFmpeg in Rust will be game-changing."</span>
-                          <br>
-                          <span class="donor-time">8 hours ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="MT">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Morgan Taylor</span>
-                          <span class="amount">$1,000</span>
-                          <br>
-                          <span class="donor-message">"Our company relies on FFmpeg. Happy to support a safer implementation."</span>
-                          <br>
-                          <span class="donor-time">12 hours ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="CW">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Casey Williams</span>
-                          <span class="amount">$50</span>
-                          <br>
-                          <span class="donor-message">"Small contribution but big support for Rust ecosystem!"</span>
-                          <br>
-                          <span class="donor-time">1 day ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="RK">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">River Kim</span>
-                          <span class="amount">$150</span>
-                          <br>
-                          <span class="donor-message">"This will revolutionize video processing. Count me in!"</span>
-                          <br>
-                          <span class="donor-time">1 day ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="JL">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Jordan Lee</span>
-                          <span class="amount">$75</span>
-                          <br>
-                          <span class="donor-message">"Rust + FFmpeg = Perfect match. Good luck team!"</span>
-                          <br>
-                          <span class="donor-time">2 days ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="donor-card">
-                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="50" valign="top">
-                          <div class="avatar">
-                            <img src="" width="40" height="40" alt="TS">
-                          </div>
-                        </td>
-                        <td valign="top">
-                          <span class="donor-name">Taylor Swift</span>
-                          <span class="amount">$200</span>
-                          <br>
-                          <span class="donor-message">"Performance and safety together. This is what we need."</span>
-                          <br>
-                          <span class="donor-time">2 days ago</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
                 </div>
               </td>
             </tr>
@@ -492,6 +317,100 @@ function selectAmount(amount) {
   document.getElementById('custom_amount').value = '';
   alert('Selected amount: $' + amount + '\n\nClick "CONTINUE TO PAYMENT" to proceed.');
 }
+
+// Load funding progress from API
+async function loadFundingProgress() {
+  const progressTable = document.getElementById('funding-progress-table');
+  
+  try {
+    console.log('Fetching funding progress from API...');
+    const response = await fetch('https://fundraiser-production-6799.up.railway.app/fundraisers/1');
+    
+    if (!response.ok) {
+      throw new Error('HTTP error! status: ' + response.status);
+    }
+    
+    const html = await response.text();
+    console.log('Received funding progress HTML length:', html.length);
+    
+    // Parse the HTML response
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Find the funding progress table
+    const apiFundingTable = doc.querySelector('table[bgcolor="#ffffff"]');
+    
+    if (apiFundingTable) {
+      console.log('Found funding progress table');
+      // Replace the entire table content with the API version
+      progressTable.innerHTML = apiFundingTable.innerHTML;
+    } else {
+      console.log('No funding progress table found in API response');
+      progressTable.querySelector('td').innerHTML = '<center><b><u>FUNDING PROGRESS</u></b></center><br><div style="text-align: center; padding: 20px; color: #FF0000;">Error loading funding progress.</div>';
+    }
+  } catch (error) {
+    console.error('Error loading funding progress:', error);
+    progressTable.querySelector('td').innerHTML = '<center><b><u>FUNDING PROGRESS</u></b></center><br><div style="text-align: center; padding: 20px; color: #FF0000;">Error loading funding progress.<br><br><font size="-2">Error: ' + error.message + '</font></div>';
+  }
+}
+
+// Load donations from API
+async function loadDonations() {
+  const scrollbox = document.getElementById('donor-list');
+  const countElement = document.getElementById('donor-count');
+  
+  try {
+    console.log('Fetching donations from API...');
+    const response = await fetch('https://fundraiser-production-6799.up.railway.app/fundraisers/1/donations');
+    
+    if (!response.ok) {
+      throw new Error('HTTP error! status: ' + response.status);
+    }
+    
+    const html = await response.text();
+    console.log('Received HTML length:', html.length);
+    
+    // Parse the HTML response
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Find the scrollbox div with inline styles
+    const apiScrollbox = doc.querySelector('div[style*="height: 600px"][style*="overflow-y: scroll"]');
+    
+    if (apiScrollbox) {
+      console.log('Found scrollbox with donations');
+      // Copy the inner HTML of the API's scrollbox to our scrollbox
+      scrollbox.innerHTML = apiScrollbox.innerHTML;
+      
+      // Try to get the count from the API response
+      const countText = doc.querySelector('font[size="-1"]');
+      if (countText) {
+        countElement.textContent = countText.textContent;
+      } else {
+        countElement.textContent = 'Recent contributions';
+      }
+    } else {
+      console.log('No scrollbox found in API response');
+      scrollbox.innerHTML = '<div style="text-align: center; padding: 20px; color: #808080;">No donations found.</div>';
+      countElement.textContent = '0 recent contributions';
+    }
+  } catch (error) {
+    console.error('Error loading donations:', error);
+    
+    scrollbox.innerHTML = '<div style="text-align: center; padding: 20px; color: #FF0000;">' +
+      'Error loading donors.<br><br>' +
+      '<font size="-2">Error: ' + error.message + '<br>' +
+      'Check browser console for details.</font>' +
+      '</div>';
+    countElement.textContent = 'Error loading contributions';
+  }
+}
+
+// Load both funding progress and donations when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  loadFundingProgress();
+  loadDonations();
+});
 </script>
 
 </body>
