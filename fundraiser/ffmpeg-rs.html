@@ -162,7 +162,7 @@ input[type="text"] {
 <tr>
   <td width="180" valign="top" bgcolor="#c0c0c0">
     <center>
-      <a href="index.html"><img src="images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
+      <a href="index.html"><img src="/images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
     </center>
     <hr>
     <b><u>I.T.S.M.R. Network</u></b>
@@ -392,16 +392,16 @@ function attemptLogin(provider) {
   document.getElementById('twitter-btn').disabled = true;
   document.getElementById('bluesky-btn').style.opacity = '0.5';
   document.getElementById('twitter-btn').style.opacity = '0.5';
-  
+
   const loadingStatus = document.getElementById('loading-status');
   loadingStatus.style.display = 'block';
-  
+
   let dots = 0;
   const loadingInterval = setInterval(function() {
     dots = (dots + 1) % 4;
     loadingStatus.innerHTML = '<font color="#0000FF"><b>● Authenticating' + '.'.repeat(dots) + '</b></font>';
   }, 500);
-  
+
   setTimeout(function() {
     clearInterval(loadingInterval);
     window.location.href = 'payment-error.html';
