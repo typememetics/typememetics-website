@@ -1,0 +1,508 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>ITSMR :: ffmpeg-rs Fundraising Initiative</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 30px;
+  background-color: #808080;
+  border: 2px solid #000000;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #00FF00;
+  width: 64.9%;
+  transition: width 0.3s ease;
+}
+
+.donor-card {
+  background-color: #e8e8e8;
+  border: 1px solid #808080;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.donor-card:hover {
+  background-color: #d0d0d0;
+  border-color: #0000FF;
+}
+
+.amount {
+  color: #008000;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+.donor-name {
+  font-weight: bold;
+  color: #000080;
+}
+
+.donor-message {
+  font-style: italic;
+  color: #404040;
+  font-size: 9pt;
+}
+
+.donor-time {
+  font-size: 8pt;
+  color: #808080;
+}
+
+.scrollbox {
+  height: 600px;
+  overflow-y: scroll;
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  padding: 10px;
+}
+
+.button {
+  background-color: #c0c0c0;
+  border: 2px outset #ffffff;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
+
+.button:hover {
+  background-color: #a0a0a0;
+}
+
+.button:active {
+  border-style: inset;
+}
+
+.button-selected {
+  background-color: #0000FF;
+  color: #FFFFFF;
+  border: 2px inset #000080;
+}
+
+input[type="text"] {
+  font-family: "Courier New", Courier, monospace;
+  padding: 4px;
+  border: 2px inset #808080;
+  background-color: #ffffff;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #000000;
+  background-color: #c0c0c0;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.login-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0f0f0;
+  border: 4px outset #ffffff;
+  padding: 20px;
+  width: 400px;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 11pt;
+  cursor: pointer;
+  border: 2px outset #ffffff;
+  background-color: #c0c0c0;
+  font-family: "Courier New", Courier, monospace;
+  text-align: left;
+}
+
+.login-button:hover {
+  background-color: #a0a0a0;
+}
+
+.bluesky-btn {
+  background-color: #1185fe;
+  color: white;
+}
+
+.twitter-btn {
+  background-color: #1DA1F2;
+  color: white;
+}
+</style>
+</head>
+
+<body bgcolor="#f0f0f0" text="#000000" link="#0000FF" vlink="#800080">
+
+<table border="0" width="100%" cellpadding="10" cellspacing="0">
+<tr>
+  <td width="180" valign="top" bgcolor="#c0c0c0">
+    <center>
+      <a href="index.html"><img src="/images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
+    </center>
+    <hr>
+    <b><u>I.T.S.M.R. Network</u></b>
+    <br>
+    <font size="-1">Secure Access Portal</font>
+    <hr>
+    <a href="index.html">Home</a><br>
+    <a href="directory.html">Directory</a><br>
+    <a href="incidents.html">Incidents</a><br>
+    <a href="cognitive-assessment/">Assessment</a><br>
+    <br>
+    <hr>
+    <b><font color="red">FUNDRAISING</font></b><br>
+    <a href="ffmpeg-rs-fundraiser.html">ffmpeg-rs</a>
+    <hr>
+  </td>
+
+  <td valign="top">
+    <center>
+      <h1><font color="#FF0000">ff</font><font color="#00FF00">m</font><font color="#0000FF">p</font><font color="#FFFF00">e</font><font color="#FF00FF">g</font><font color="#00FFFF">-</font><font color="#FF8000">r</font><font color="#8000FF">s</font></h1>
+      <h3><i>Containment Protocol for Multimedia Infrastructure :: Eliminating C from the Video Processing Supply Chain</i></h3>
+    </center>
+    <hr size="4">
+
+    <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff" id="funding-progress-table">
+      <tr>
+        <td>
+          <center><b><u>FUNDING PROGRESS</u></b></center>
+          <br>
+          <div style="text-align: center; padding: 20px; color: #808080;">
+            Loading funding progress...
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+
+    <table border="0" width="100%" cellpadding="0" cellspacing="10">
+      <tr valign="top">
+        <td width="65%">
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffcc">
+            <tr>
+              <td>
+                <center><b><u>SUPPORT THIS PROJECT</u></b></center>
+                <br>
+                <form action="#" method="post">
+                  <b>Select Amount:</b><br><br>
+                  <table border="0" cellpadding="5" cellspacing="5">
+                    <tr>
+                      <td><button type="button" class="button" onclick="selectAmount(10)">$10</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(25)">$25</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(50)">$50</button></td>
+                    </tr>
+                    <tr>
+                      <td><button type="button" class="button" onclick="selectAmount(100)">$100</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(250)">$250</button></td>
+                      <td><button type="button" class="button" onclick="selectAmount(500)">$500</button></td>
+                    </tr>
+                  </table>
+                  <br>
+                  <b>Or Enter Custom Amount:</b><br>
+                  $ <input type="text" name="custom_amount" id="custom_amount" size="10" value="">
+                  <br><br>
+                  <center>
+                    <button type="button" onclick="showLogin()" class="button" style="font-size: 12pt; padding: 10px 20px;">CONTINUE TO PAYMENT &gt;&gt;</button>
+                  </center>
+                  <br>
+                  <font size="-1"><i>Secure payment processing. Your contribution helps eradicate undefined behavior from critical infrastructure.</i></font>
+                </form>
+              </td>
+            </tr>
+          </table>
+
+          <br>
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+            <tr>
+              <td>
+                <b><u>ABOUT THE PROJECT</u></b>
+                <p>
+                  FFmpeg processes billions of video frames daily across the internet's critical infrastructure. Yet it remains written in <font color="#FF0000"><b>C</b></font> - a language from 1972 that treats memory safety as optional, undefined behavior as <i>acceptable</i>, and buffer overflows as <i>your problem</i>.
+                </p>
+                <p>
+                  Every frame processed by FFmpeg's C codebase is a roll of the dice. Use-after-free? Null pointer dereference? Data race? The compiler shrugs. The runtime shrugs. <i>The universe itself is indifferent to your segfault.</i>
+                </p>
+                <p>
+                  <b>ffmpeg-rs</b> is not an enhancement. It is <b>containment protocol</b>. By rewriting FFmpeg in Rust, we eliminate entire classes of memory corruption, race conditions, and undefined behavior that C treats as "developer responsibility" - a responsibility developers have <i>catastrophically failed</i> to uphold for five decades.
+                </p>
+                <p>
+                  <font color="#0000FF"><b>Type safety is not negotiable. Memory safety is not optional. The age of C must end.</b></font>
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <br>
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#e8f4ff">
+            <tr>
+              <td>
+                <b><u>WHY RUST? (OR: WHY NOT C?)</u></b>
+                <ul>
+                  <li><b>Memory Safety Without Runtime Cost:</b> The borrow checker <i>proves</i> safety at compile-time. C's malloc/free dance is a memetic hazard - every pointer is Schrödinger's dangling reference until runtime observation collapses it into a segfault.</li>
+                  <li><b>Elimination of Undefined Behavior:</b> C's spec contains the phrase "undefined behavior" 191 times. This is not a feature. This is an admission of conceptual bankruptcy. Rust has <i>zero tolerance</i> for UB.</li>
+                  <li><b>Fearless Concurrency:</b> C threads + shared mutable state = cognitive DoS attack on future maintainers. Rust's type system makes data races <i>impossible to compile</i>. Not "hard to write" - <b>impossible</b>.</li>
+                  <li><b>Modern Tooling:</b> Cargo vs. autoconf/make is the difference between a sterile surgical suite and a 1970s field hospital. One prevents infection. The other <i>is</i> the infection.</li>
+                  <li><b>Type-Driven Development:</b> C's type system is a polite suggestion. Rust's type system is an <i>enforced containment protocol</i> for logical consistency.</li>
+                </ul>
+                <p><font size="-1"><i>C was a miracle in 1972. It is a liability in 2025. The Institute does not tolerate liabilities.</i></font></p>
+              </td>
+            </tr>
+          </table>
+
+          <br>
+
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffe8e8">
+            <tr>
+              <td>
+                <b><u>CONTAINMENT MILESTONES</u></b>
+                <br><br>
+                <table border="1" width="100%" cellpadding="8" cellspacing="0">
+                  <tr bgcolor="#c0ffc0">
+                    <td><b>$50,000</b></td>
+                    <td><b>Phase 1: Initial Quarantine</b><br>
+                    <font size="-1">Replace malloc/free with ownership semantics. Eliminate null pointers. Codec framework with guarantees C will never provide.</font></td>
+                  </tr>
+                  <tr bgcolor="#e0e0e0">
+                    <td><b>$150,000</b></td>
+                    <td><b>Phase 2: Active Decontamination</b><br>
+                    <font size="-1">H.264, H.265, VP9, AV1 rewritten. Zero undefined behavior. Zero buffer overflows. Zero data races. The age of "it works on my machine" ends.</font></td>
+                  </tr>
+                  <tr bgcolor="#e0e0e0">
+                    <td><b>$300,000</b></td>
+                    <td><b>Phase 3: Complete Eradication</b><br>
+                    <font size="-1">Full FFmpeg parity without the vulnerabilities, memory leaks, or race conditions. C's experiment in "trusting developers" is over.</font></td>
+                  </tr>
+                </table>
+                <br>
+                <p><font size="-1" color="#FF0000"><b>WARNING:</b> Every day FFmpeg remains in C is another CVE waiting to happen. <i>The threat is active. The containment is urgent.</i></font></p>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+
+        <!-- RIGHT COLUMN: DONOR SIDEBAR -->
+        <td width="35%">
+          <table border="2" width="100%" cellpadding="10" cellspacing="0" bgcolor="#ffffff">
+            <tr bgcolor="#c0c0c0">
+              <td>
+                <center><b>RECENT BACKERS</b></center>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <font size="-1" id="donor-count">Loading contributions...</font>
+                <hr>
+                <div class="scrollbox" id="donor-list">
+                  <div style="text-align: center; padding: 20px; color: #808080;">
+                    Loading donors...
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <hr size="4">
+    <center>
+      <font size="-1">
+        &copy; 2025 ITSMR ffmpeg-rs Initiative. All contributions are final and non-refundable.
+        <br>
+        This page is compliant with HTML 3.2. For optimal viewing, use Netscape Navigator 3.0 or higher.
+      </font>
+    </center>
+  </td>
+</tr>
+</table>
+
+<div id="loginModal" class="login-modal">
+  <div class="login-box">
+    <center>
+      <h2><u>SECURE LOGIN REQUIRED</u></h2>
+      <p><font size="-1">To process your payment, please authenticate your identity using one of the following services:</font></p>
+    </center>
+    <hr>
+    <br>
+    <button class="login-button bluesky-btn" onclick="attemptLogin('bluesky')" id="bluesky-btn">
+      <b>&#x2601; Login with Bluesky</b>
+    </button>
+    <button class="login-button twitter-btn" onclick="attemptLogin('twitter')" id="twitter-btn">
+      <b>&#x1F426; Login with Twitter</b>
+    </button>
+    <div id="loading-status" style="display: none; text-align: center; margin-top: 15px;">
+      <font color="#0000FF"><b>● Authenticating...</b></font>
+    </div>
+    <br>
+    <hr>
+    <center>
+      <button class="button" onclick="closeLogin()" style="margin-top: 10px;">CANCEL</button>
+    </center>
+    <br>
+    <center><font size="-2" color="#808080">Secure OAuth 2.0 authentication</font></center>
+  </div>
+</div>
+
+<script>
+function selectAmount(amount) {
+  document.getElementById('custom_amount').value = '';
+  alert('Selected amount: $' + amount + '\n\nClick "CONTINUE TO PAYMENT" to proceed.');
+}
+
+function showLogin() {
+  document.getElementById('loginModal').style.display = 'block';
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').style.display = 'none';
+}
+
+function attemptLogin(provider) {
+  document.getElementById('bluesky-btn').disabled = true;
+  document.getElementById('twitter-btn').disabled = true;
+  document.getElementById('bluesky-btn').style.opacity = '0.5';
+  document.getElementById('twitter-btn').style.opacity = '0.5';
+
+  const loadingStatus = document.getElementById('loading-status');
+  loadingStatus.style.display = 'block';
+
+  let dots = 0;
+  const loadingInterval = setInterval(function() {
+    dots = (dots + 1) % 4;
+    loadingStatus.innerHTML = '<font color="#0000FF"><b>● Authenticating' + '.'.repeat(dots) + '</b></font>';
+  }, 500);
+
+  setTimeout(function() {
+    clearInterval(loadingInterval);
+    window.location.href = 'payment-error.html';
+  }, 5000);
+}
+
+// Load funding progress from API
+async function loadFundingProgress() {
+  const progressTable = document.getElementById('funding-progress-table');
+
+  try {
+    console.log('Fetching funding progress from API...');
+    const response = await fetch('https://fundraiser-production-6799.up.railway.app/fundraisers/1');
+
+    if (!response.ok) {
+      throw new Error('HTTP error! status: ' + response.status);
+    }
+
+    const html = await response.text();
+    console.log('Received funding progress HTML length:', html.length);
+
+    // Parse the HTML response
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Find the funding progress table
+    const apiFundingTable = doc.querySelector('table[bgcolor="#ffffff"]');
+
+    if (apiFundingTable) {
+      console.log('Found funding progress table');
+      // Replace the entire table content with the API version
+      progressTable.innerHTML = apiFundingTable.innerHTML;
+    } else {
+      console.log('No funding progress table found in API response');
+      progressTable.querySelector('td').innerHTML = '<center><b><u>FUNDING PROGRESS</u></b></center><br><div style="text-align: center; padding: 20px; color: #FF0000;">Error loading funding progress.</div>';
+    }
+  } catch (error) {
+    console.error('Error loading funding progress:', error);
+    progressTable.querySelector('td').innerHTML = '<center><b><u>FUNDING PROGRESS</u></b></center><br><div style="text-align: center; padding: 20px; color: #FF0000;">Error loading funding progress.<br><br><font size="-2">Error: ' + error.message + '</font></div>';
+  }
+}
+
+// Load donations from API
+async function loadDonations() {
+  const scrollbox = document.getElementById('donor-list');
+  const countElement = document.getElementById('donor-count');
+
+  try {
+    console.log('Fetching donations from API...');
+    const response = await fetch('https://fundraiser-production-6799.up.railway.app/fundraisers/1/donations');
+
+    if (!response.ok) {
+      throw new Error('HTTP error! status: ' + response.status);
+    }
+
+    const html = await response.text();
+    console.log('Received HTML length:', html.length);
+
+    // Parse the HTML response
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Find the scrollbox div with inline styles
+    const apiScrollbox = doc.querySelector('div[style*="height: 600px"][style*="overflow-y: scroll"]');
+
+    if (apiScrollbox) {
+      console.log('Found scrollbox with donations');
+      // Copy the inner HTML of the API's scrollbox to our scrollbox
+      scrollbox.innerHTML = apiScrollbox.innerHTML;
+
+      // Try to get the count from the API response
+      const countText = doc.querySelector('font[size="-1"]');
+      if (countText) {
+        countElement.textContent = countText.textContent;
+      } else {
+        countElement.textContent = 'Recent contributions';
+      }
+    } else {
+      console.log('No scrollbox found in API response');
+      scrollbox.innerHTML = '<div style="text-align: center; padding: 20px; color: #808080;">No donations found.</div>';
+      countElement.textContent = '0 recent contributions';
+    }
+  } catch (error) {
+    console.error('Error loading donations:', error);
+
+    scrollbox.innerHTML = '<div style="text-align: center; padding: 20px; color: #FF0000;">' +
+      'Error loading donors.<br><br>' +
+      '<font size="-2">Error: ' + error.message + '<br>' +
+      'Check browser console for details.</font>' +
+      '</div>';
+    countElement.textContent = 'Error loading contributions';
+  }
+}
+
+// Load both funding progress and donations when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  loadFundingProgress();
+  loadDonations();
+});
+</script>
+
+</body>
+</html>
+

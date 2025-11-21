@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>ERROR :: Payment System Failure</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+  background-color: #000080;
+  color: #ffffff;
+}
+
+.error-box {
+  background-color: #c0c0c0;
+  border: 4px outset #ffffff;
+  margin: 50px auto;
+  width: 600px;
+  padding: 20px;
+  color: #000000;
+}
+
+.error-title {
+  background-color: #000080;
+  color: #ffffff;
+  padding: 5px;
+  font-weight: bold;
+}
+
+.error-icon {
+  font-size: 48pt;
+  color: #ff0000;
+}
+
+.button {
+  background-color: #c0c0c0;
+  border: 2px outset #ffffff;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  margin: 5px;
+}
+
+.button:hover {
+  background-color: #a0a0a0;
+}
+
+.button:active {
+  border-style: inset;
+}
+
+.glitch {
+  animation: glitch 1s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.stack-trace {
+  background-color: #000000;
+  color: #00ff00;
+  padding: 10px;
+  font-size: 8pt;
+  overflow-x: auto;
+  margin: 10px 0;
+  border: 2px inset #808080;
+}
+</style>
+</head>
+
+<body>
+
+<div class="error-box">
+  <div class="error-title">
+    &#x26A0; ITSMR Payment Gateway - Critical System Error
+  </div>
+  <br>
+  <center>
+    <div class="error-icon glitch">&#x2620;</div>
+    <h2><font color="#ff0000">FATAL EXCEPTION 0x8007F4A9</font></h2>
+  </center>
+  
+  <hr>
+  
+  <p><b>An unexpected error has occurred in the payment processing subsystem.</b></p>
+  
+  <p>
+    <font color="#ff0000"><b>ERROR CODE:</b></font> OAUTH_VALIDATION_FAILURE<br>
+    <font color="#ff0000"><b>STATUS:</b></font> Authentication service unreachable<br>
+    <font color="#ff0000"><b>TIMESTAMP:</b></font> <span id="timestamp"></span><br>
+    <font color="#ff0000"><b>SESSION ID:</b></font> <span class="glitch">NULL_PTR_EXCEPTION</span>
+  </p>
+  
+  <hr>
+  
+  <div class="stack-trace">
+    <pre>
+[CRITICAL] Failed to establish secure connection to OAuth provider
+[ERROR] SSL_HANDSHAKE_TIMEOUT at line 1447 in auth_handler.c
+[ERROR] Could not verify certificate chain
+[FATAL] Segmentation fault in payment_processor.dll
+[ERROR] Memory access violation at address 0x????????
+[WARN] Attempting rollback... FAILED
+[CRITICAL] Database connection pool exhausted
+[ERROR] Transaction ID generation failed: entropy source depleted
+[PANIC] Stack corruption detected in security module
+[ERROR] Unable to release mutex lock
+[FATAL] KERNEL PANIC - system halted</pre>
+  </div>
+  
+  <hr>
+  
+  <p>
+    <b>Possible causes:</b>
+  </p>
+  <ul>
+    <li>Third-party authentication service is temporarily unavailable</li>
+    <li>Network timeout during OAuth handshake</li>
+    <li>Certificate validation failure</li>
+    <li>Cosmic ray bit flip in payment processor</li>
+    <li>Undefined behavior in legacy C codebase</li>
+    <li>The universe is conspiring against this transaction</li>
+  </ul>
+  
+  <hr>
+  
+  <center>
+    <p><font size="-1"><i>Your payment has NOT been processed. No charges have been made.</i></font></p>
+    
+    <button class="button" onclick="window.history.back()">&#x2190; GO BACK</button>
+    <button class="button" onclick="tryAgain()" id="try-again-btn">TRY AGAIN</button>
+    <button class="button" onclick="window.close()">CLOSE</button>
+    
+    <div id="retry-status" style="display: none; margin-top: 15px;">
+      <font color="#0000FF"><b>● Retrying connection...</b></font>
+    </div>
+  </center>
+  
+  <br>
+  
+  <center>
+    <font size="-2" color="#808080">
+      If this problem persists, please contact ITSMR Technical Support<br>
+      Reference Code: TS-PAY-<?php echo substr(md5(rand()), 0, 8); ?><br>
+      <br>
+      <i>This is what happens when you don't use Rust.</i>
+    </font>
+  </center>
+</div>
+
+<script>
+document.getElementById('timestamp').textContent = new Date().toISOString();
+
+setInterval(function() {
+  const elements = document.querySelectorAll('.glitch');
+  elements.forEach(el => {
+    if (Math.random() > 0.7) {
+      el.style.color = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff'][Math.floor(Math.random() * 4)];
+    }
+  });
+}, 200);
+
+function tryAgain() {
+  const btn = document.getElementById('try-again-btn');
+  const retryStatus = document.getElementById('retry-status');
+  
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  
+  retryStatus.style.display = 'block';
+  
+  let dots = 0;
+  const retryInterval = setInterval(function() {
+    dots = (dots + 1) % 4;
+    retryStatus.innerHTML = '<font color="#0000FF"><b>● Retrying connection' + '.'.repeat(dots) + '</b></font>';
+  }, 500);
+  
+  setTimeout(function() {
+    clearInterval(retryInterval);
+    location.reload();
+  }, 10000);
+}
+</script>
+
+</body>
+</html>
