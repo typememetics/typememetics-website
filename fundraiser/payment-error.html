@@ -86,20 +86,20 @@ body {
     <div class="error-icon glitch">&#x2620;</div>
     <h2><font color="#ff0000">FATAL EXCEPTION 0x8007F4A9</font></h2>
   </center>
-  
+
   <hr>
-  
+
   <p><b>An unexpected error has occurred in the payment processing subsystem.</b></p>
-  
+
   <p>
     <font color="#ff0000"><b>ERROR CODE:</b></font> OAUTH_VALIDATION_FAILURE<br>
     <font color="#ff0000"><b>STATUS:</b></font> Authentication service unreachable<br>
     <font color="#ff0000"><b>TIMESTAMP:</b></font> <span id="timestamp"></span><br>
     <font color="#ff0000"><b>SESSION ID:</b></font> <span class="glitch">NULL_PTR_EXCEPTION</span>
   </p>
-  
+
   <hr>
-  
+
   <div class="stack-trace">
     <pre>
 [CRITICAL] Failed to establish secure connection to OAuth provider
@@ -114,9 +114,9 @@ body {
 [ERROR] Unable to release mutex lock
 [FATAL] KERNEL PANIC - system halted</pre>
   </div>
-  
+
   <hr>
-  
+
   <p>
     <b>Possible causes:</b>
   </p>
@@ -128,23 +128,24 @@ body {
     <li>Undefined behavior in legacy C codebase</li>
     <li>The universe is conspiring against this transaction</li>
   </ul>
-  
+
   <hr>
-  
+
   <center>
     <p><font size="-1"><i>Your payment has NOT been processed. No charges have been made.</i></font></p>
-    
+
     <button class="button" onclick="window.history.back()">&#x2190; GO BACK</button>
     <button class="button" onclick="tryAgain()" id="try-again-btn">TRY AGAIN</button>
     <button class="button" onclick="window.close()">CLOSE</button>
-    
+    <button class="button" onclick="shareOnX()">&#x1F4AC; CONTACT SUPPORT</button>
+
     <div id="retry-status" style="display: none; margin-top: 15px;">
       <font color="#0000FF"><b>● Retrying connection...</b></font>
     </div>
   </center>
-  
+
   <br>
-  
+
   <center>
     <font size="-2" color="#808080">
       If this problem persists, please contact ITSMR Technical Support<br>
@@ -170,22 +171,28 @@ setInterval(function() {
 function tryAgain() {
   const btn = document.getElementById('try-again-btn');
   const retryStatus = document.getElementById('retry-status');
-  
+
   btn.disabled = true;
   btn.style.opacity = '0.5';
-  
+
   retryStatus.style.display = 'block';
-  
+
   let dots = 0;
   const retryInterval = setInterval(function() {
     dots = (dots + 1) % 4;
     retryStatus.innerHTML = '<font color="#0000FF"><b>● Retrying connection' + '.'.repeat(dots) + '</b></font>';
   }, 500);
-  
+
   setTimeout(function() {
     clearInterval(retryInterval);
     location.reload();
   }, 10000);
+}
+
+function shareOnX() {
+  const text = "Experiencing payment problems with the fundraiser. @typememetics - need assistance!";
+  const url = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
+  window.open(url, '_blank', 'width=550,height=420');
 }
 </script>
 
