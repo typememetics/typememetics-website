@@ -50,6 +50,57 @@ body {
   border-style: inset;
 }
 
+.button-contact {
+  background: linear-gradient(90deg, 
+    #ff0000 0%, 
+    #ff7f00 14%, 
+    #ffff00 28%, 
+    #00ff00 42%, 
+    #0000ff 57%, 
+    #4b0082 71%, 
+    #9400d3 85%, 
+    #ff0000 100%);
+  background-size: 200% 100%;
+  border: 3px outset #ffffff;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  margin: 5px;
+  color: #000000;
+  text-shadow: 0 0 5px #ffffff;
+  box-shadow: 0 0 15px rgba(255,255,255,0.8);
+  animation: rainbow-slide 3s linear infinite, pulse 2s infinite;
+}
+
+.button-contact:hover {
+  box-shadow: 0 0 25px rgba(255,255,255,1), 0 0 35px rgba(255,255,255,0.6);
+  transform: scale(1.05);
+}
+
+.button-contact:active {
+  border-style: inset;
+  transform: scale(0.98);
+}
+
+@keyframes rainbow-slide {
+  0% { 
+    background-position: 0% 50%;
+  }
+  100% { 
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(255,255,255,0.8);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.6);
+  }
+}
+
 .glitch {
   animation: glitch 1s infinite;
 }
@@ -137,7 +188,7 @@ body {
     <button class="button" onclick="window.history.back()">&#x2190; GO BACK</button>
     <button class="button" onclick="tryAgain()" id="try-again-btn">TRY AGAIN</button>
     <button class="button" onclick="window.close()">CLOSE</button>
-    <button class="button" onclick="shareOnX()">&#x1F4AC; CONTACT SUPPORT</button>
+    <button class="button-contact" onclick="shareOnX()">&#x1F4AC; CONTACT SUPPORT</button>
 
     <div id="retry-status" style="display: none; margin-top: 15px;">
       <font color="#0000FF"><b>● Retrying connection...</b></font>
