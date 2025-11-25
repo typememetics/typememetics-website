@@ -1,0 +1,311 @@
+<html>
+
+<head>
+  <script src="./d3.v7.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+  body {
+    font-family: SFMono-Regular,monospace;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+  }
+  </style>
+</head>
+
+<body>
+
+<div style="max-width: 800px; margin-left: auto; margin-right: auto;">
+<br/>
+<h1>FFmpeg Binding Performance Comparison</h1>
+<br/>
+<div id="loops"></div>
+
+<br/><br/><br/>
+
+<h2>Methodology</h2>
+<p>
+Performance benchmark comparing different FFmpeg binding approaches.
+Lower times indicate better performance.
+</p>
+
+</br>
+
+<h2>Details</h2>
+
+<p>
+Comparison of FFmpeg binding performance across different implementations.
+</p>
+</br></br></br></br>
+
+</div>
+
+</body>
+
+<script>
+
+class LatencyVisual {
+
+  constructor(id, timings, minSlow, maxSlow) {
+
+    //////////////////////////////////
+    //                              //
+    // 1,000,000,000ns = 1s         //
+    // 1,000,000us = 1s             //
+    // 1,000ms = 1s                 //
+    //                              //
+    // timings below in nanoseconds //
+    //                              //
+    //////////////////////////////////
+
+    this.timings = timings;
+
+    for (const timing of timings) {
+      timing.class = id + '-' + timing.class;
+    }
+
+    this.minSlow = minSlow;
+    this.maxSlow = maxSlow;
+    this.slowdown = this.maxSlow/2;
+    this.oneBillion = 1000000000;
+    this.oneMillion = 1000000;
+    this.totalTime = 1000000;
+
+    this.id = id;
+    this.dom = document.getElementById(this.id);
+    this.initializeBaseElements();
+    this.domSVG = this.dom.getElementsByClassName('latencySVG')[0];
+    this.domSVG.style.height = this.domSVG.clientWidth/4 + 'px';
+
+    this.updateSizes();
+
+    window.addEventListener("resize", function(event) {
+      this.redrawAfterChange();
+    }.bind(this), false);
+
+    this.initialize();
+
+    setTimeout((() => {
+      for (const t of this.timings) {
+        this.animateCircle(`.${t.class}Ball`, this.D, t, t.timeFor);
+      }
+    }).bind(this), 500);
+
+  }
+
+  redrawAfterChange() {
+    this.updateSizes();
+    this.initialize();
+    this.update();
+  }
+
+  initializeBaseElements() {
+    const container = d3.select('#' + this.id)
+      .append('div')
+        .attr('class', 'interactivityContainer')
+        .attr('id', 'interactivityContainer')
+      .style('width', '100%');
+    const svgContainer = container.append('div')
+      .attr('class', 'svgContainer')
+      .style('margin-left', 'auto')
+      .style('margin-right', 'auto')
+      .style('width', '100%')
+      .style('max-width', '1000px');
+    this.svg = svgContainer.append('svg')
+      .attr('class', 'latencySVG')
+      .attr('id', 'latencySVGID')
+      .style('width', '100%')
+      .style('height', '100%');
+  }
+
+  updateSizes() {
+
+    this.domSVG.style.height = this.domSVG.clientWidth + 'px';
+    this.width = this.domSVG.clientWidth;
+    this.height = this.width;
+
+    this.cr = this.height / (this.timings.length*2 + 3);
+    this.fontSize = this.width / 43;
+    this.strokeWidth = this.width * 0.025;
+
+    this.X = this.strokeWidth;
+    this.W = this.width*0.25;
+    this.H = this.height / (this.timings.length+2);
+    this.BX = this.X + this.W + this.cr;
+    this.EX = this.width - this.cr - this.strokeWidth/2;
+    this.D = this.EX - this.BX;
+
+    let spacing = (this.height / (this.timings.length+1))
+    let i = 0;
+    for (let timing of this.timings) {
+      i++;
+      timing.y = spacing * i;
+      timing.cx = this.BX;
+      timing.prevT = 0;
+      timing.forward = true;
+      timing.begin = this.BX;
+      timing.end = this.EX;
+    }
+  }
+
+  drawBox(timing, x, w, h) {
+    this.svg.select(`.${timing.class}Ball`)
+      .attr('fill', timing.color)
+      .attr('cx', this.BX)
+      .attr('cy', timing.y)
+      .attr('stroke', '#444')
+      .attr('stroke-width', 1)
+      .style('filter', 'drop-shadow(2px 2px 2px #00000025)')
+      .attr('rx', this.cr)
+      .attr('ry', this.cr)
+    this.svg.select(`.${timing.class}`)
+      .attr('fill', '#444')
+      .attr('x', x)
+      .attr('y', timing.y - (h/2))
+      .style('filter', 'drop-shadow(2px 2px 2px #00000025)')
+      .attr('width', w)
+      .attr('height', h);
+    this.svg.select(`.${timing.class}Label`)
+      .text(timing.label)
+      .style("font-size", this.fontSize + 'px')
+      .attr('text-anchor', 'start')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', '#fff')
+      .attr('x', x + this.fontSize*0.5)
+      .attr('y', timing.y + (h*0.05));
+    // Position image inside the moving circle
+    this.svg.select(`.${timing.class}Image`)
+      .attr('href', timing.image)
+      .attr('x', this.BX - this.cr*0.7)
+      .attr('y', timing.y - this.cr*0.7)
+      .style('filter', 'drop-shadow(2px 2px 2px #00000050)')
+      .attr('width', this.cr*1.4)
+      .attr('height', this.cr*1.4)
+      .attr('clip-path', `circle(${this.cr*0.7}px at ${this.cr*0.7}px ${this.cr*0.7}px)`)
+    if (timing.change != undefined) {
+      this.svg.select(`.${timing.class}Change`)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('x', x + h*0.4)
+        .attr('y', timing.y + h*0.05)
+        .attr('fill', (d) => timing.change > 0 ? '#75db8c' : '#ff7082')
+        .style('filter', 'drop-shadow(2px 2px 2px #00000050)')
+        .attr('width', h)
+        .attr('height', h)
+        .style('font-size', '20px')
+        .style('font-weight', '700')
+        .text((d) => (timing.change > 0 ? '+' : '') + timing.change)
+    }
+  }
+
+  initialize() {
+    this.svg.selectAll('.IOsPerSecond')
+      .data([0])
+      .join((enter) => enter.append('g').attr('class', 'IOsPerSecond'));
+
+    const background = this.svg.select('.IOsPerSecond').selectAll('.diagram')
+      .data([0])
+      .join(
+        (enter) => {
+          let g = enter.append('g').attr('class', 'diagram');
+          g.append('rect').attr('class', 'background')
+          for (let timing of this.timings) {
+            g.append('rect').attr('class', timing.class);
+            g.append('text').attr('class', timing.class + 'Label');
+            g.append('ellipse').attr('class', timing.class + 'Ball');
+            g.append('image').attr('class', timing.class + 'Image');
+            g.append('text').attr('class', timing.class + 'Change');
+          }
+          return g;
+        }
+      );
+
+    background.select('.background')
+      .attr('fill', '#eee')
+      .attr('stroke', '#444')
+      .attr('stroke-width', this.strokeWidth)
+      .attr('x', 1)
+      .attr('y', 1)
+      .attr('width', this.width-2)
+      .attr('height', this.height-2);
+
+    for (let timing of this.timings) {
+      this.drawBox(timing, this.X, this.W, this.H)
+    }
+  }
+
+  animateCircle(selector, d, stash, tns) {
+    let b = this.svg.select(selector);
+    let img = this.svg.select(selector.replace('Ball', 'Image'));
+    
+    b.transition().ease(d3.easeLinear).duration(this.totalTime)
+      .attrTween('cx',
+        () => {
+          return function(t) {
+            const elapsedMS = (t*this.totalTime) - stash.prevT; // 100
+            const ioMS = ( (tns * this.slowdown) / this.oneMillion);
+            const travelDistTotal = d * (elapsedMS / ioMS);
+            let travelDist = travelDistTotal * 2;
+
+            if (!stash.forward)
+              travelDist = -travelDist;
+            stash.cx += travelDist;
+
+            if (stash.forward && stash.cx > stash.end) {
+              stash.forward = !stash.forward;
+              stash.cx -= stash.cx - stash.end;
+            } else if (!stash.forward && stash.cx < stash.begin) {
+              stash.forward = !stash.forward;
+              stash.cx -= stash.cx - stash.begin;
+            }
+
+            stash.prevT = (t*this.totalTime);
+            
+            // Update image position to follow the circle
+            img.attr('x', stash.cx - this.cr*0.7);
+            
+            return stash.cx;
+          }.bind(this);
+        }
+      );
+  }
+}
+
+const loops = new LatencyVisual('loops',
+    [
+      {
+        label: 'ffmpeg-rs (0.50s)',
+        image: 'https://placehold.co/100x100.png?text=ffmpeg-rs',
+        timeFor: 500000000,
+        class: 'ffmpegRs',
+        color: 'rgb(206, 66, 43)'
+      },
+      {
+        label: 'ffmpeg (0.80s)',
+        image: 'https://placehold.co/100x100.png?text=ffmpeg',
+        timeFor: 800000000,
+        class: 'ffmpeg',
+        color: 'rgb(92, 184, 92)'
+      },
+      {
+        label: 'rust-ffmpeg-sys (1.20s)',
+        image: 'https://placehold.co/100x100.png?text=rust-ffmpeg-sys',
+        timeFor: 1200000000,
+        class: 'rustFfmpegSys',
+        color: 'rgb(240, 173, 78)'
+      },
+      {
+        label: 'mturk (2.50s)',
+        image: 'https://placehold.co/100x100.png?text=mturk',
+        timeFor: 2500000000,
+        class: 'mturk',
+        color: 'rgb(217, 83, 79)'
+      },
+    ],
+    1, 3);
+</script>
+
+</html>
+
