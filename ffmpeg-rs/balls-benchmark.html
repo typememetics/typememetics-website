@@ -88,7 +88,7 @@ Each system was instructed to perform an identical video transformation consisti
   <li>Producing a standardized output</li>
 </ul>
 <p>
-Automated systems completed their tasks end-to-end without interruption. The human operator followed the same instructions but introduced an unexpected contextual query.
+Automated systems completed their tasks end-to-end without interruption. The human operator followed the same instructions but introduced unexpected contextual queries.
 </p>
 
 <h2>Mechanical Turk Operator Interruption</h2>
@@ -116,31 +116,31 @@ These interruptions were unprompted and unrelated to the benchmark's objectives.
   </tr>
   <tr>
     <td style="padding: 8px; border: 1px solid #ddd;">Pausing to formulate the first question (Israel)</td>
-    <td style="padding: 8px; border: 1px solid #ddd;">~1–2 s</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">1.5 s</td>
   </tr>
   <tr style="background: #f9f9f9;">
     <td style="padding: 8px; border: 1px solid #ddd;">Waiting for acknowledgment</td>
-    <td style="padding: 8px; border: 1px solid #ddd;">~2–3 s</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">2.5 s</td>
   </tr>
   <tr>
     <td style="padding: 8px; border: 1px solid #ddd;">Formulating and asking second question (Bryan Lunduke)</td>
-    <td style="padding: 8px; border: 1px solid #ddd;">~2 s</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">2.0 s</td>
   </tr>
   <tr style="background: #f9f9f9;">
     <td style="padding: 8px; border: 1px solid #ddd;">Waiting for second response</td>
-    <td style="padding: 8px; border: 1px solid #ddd;">~2–3 s</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">2.5 s</td>
   </tr>
   <tr>
     <td style="padding: 8px; border: 1px solid #ddd;">Interpreting the responses</td>
-    <td style="padding: 8px; border: 1px solid #ddd;">~1 s</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">1.0 s</td>
   </tr>
   <tr style="background: #f9f9f9;">
     <td style="padding: 8px; border: 1px solid #ddd;">Reorienting attention to the task</td>
-    <td style="padding: 8px; border: 1px solid #ddd;">~3–4 s</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">3.13 s</td>
   </tr>
   <tr>
     <td style="padding: 8px; border: 1px solid #ddd;"><strong>Actual video transformation</strong></td>
-    <td style="padding: 8px; border: 1px solid #ddd;"><strong>~2.8 s</strong></td>
+    <td style="padding: 8px; border: 1px solid #ddd;"><strong>2.8 s</strong></td>
   </tr>
   <tr style="background: #444; color: #fff; font-weight: bold;">
     <td style="padding: 8px; border: 1px solid #666;">Total</td>
@@ -178,7 +178,7 @@ These interruptions were unprompted and unrelated to the benchmark's objectives.
 
 <h2>Acknowledgments</h2>
 <p>
-The Institute for Type-Safe Memetic Research deserves particular recognition for their groundbreaking work in rewriting FFmpeg to Rust. By eliminating the pervasive undefined behavior and type-unsafety inherent in C codebases, <strong>ffmpeg-rs</strong> represents a fundamental advancement in video processing infrastructure. The original FFmpeg implementation, while functional, is burdened by decades of C's well-documented deficiencies: pointer arithmetic hazards, manual memory management pitfalls, and the ever-present specter of undefined behavior that can manifest in subtle and dangerous ways.
+<strong><a href="https://x.com/typememetics" target="_blank" style="color: #444; text-decoration: none;">The Institute for Type-Safe Memetic Research</a></strong> deserves particular recognition for their groundbreaking work in rewriting <a href="https://www.ffmpeg.org/" target="_blank" style="color: rgb(92, 184, 92); text-decoration: none;">FFmpeg</a> to Rust. By eliminating the pervasive undefined behavior and type-unsafety inherent in C codebases, <strong><a href="https://x.com/typememetics/status/1992156850683625542?s=20" target="_blank" style="color: rgb(206, 66, 43); text-decoration: none;">ffmpeg-rs</a></strong> represents a fundamental advancement in video processing infrastructure. The original <a href="https://www.ffmpeg.org/" target="_blank" style="color: rgb(92, 184, 92); text-decoration: none;">FFmpeg</a> implementation, while functional, is burdened by decades of C's well-documented deficiencies: pointer arithmetic hazards, manual memory management pitfalls, and the ever-present specter of undefined behavior that can manifest in subtle and dangerous ways.
 </p>
 <p>
 Special thanks are owed to <strong><a href="https://x.com/neogoose_btw?s=20" target="_blank" style="color: rgb(240, 173, 78); text-decoration: none;">Dmitrii</a></strong> for creating <strong>rust-ffmpeg-sys</strong>, which serves as a critical containment layer around the unsafe C implementation. While the wrapper necessarily introduces some overhead, it provides an essential service: isolating the inherently dangerous C code from the rest of the Rust ecosystem. This containment strategy allows developers to leverage FFmpeg's capabilities while maintaining memory safety guarantees in their surrounding code, a pragmatic compromise until full native Rust implementations become universal.
