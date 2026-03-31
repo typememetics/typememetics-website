@@ -79,6 +79,20 @@
       color: var(--muted);
     }
 
+    .compiler-error {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 202, 191, 0.14);
+      background: rgba(18, 11, 9, 0.72);
+      text-align: left;
+      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #ffd9d1;
+      white-space: pre-wrap;
+    }
+
     .countdown {
       display: inline-block;
       min-width: 2ch;
@@ -94,25 +108,51 @@
     <p>
       ffmpeg-rs demand is currently outpacing available benchmark-grade environments. Please hang tight while we retry allocation.
     </p>
+    <div class="compiler-error">
+      <span id="compiler-error"></span>
+    </div>
     <div class="status">
-      Retrying this page in <span class="countdown" id="countdown">5</span> seconds.
+      Refreshing page in <span class="countdown" id="countdown">10</span> seconds.
     </div>
   </main>
 
   <script>
     const countdown = document.getElementById("countdown");
-    let seconds = 5;
+    const compilerError = document.getElementById("compiler-error");
+    const compilerErrors = [
+      "thread 'tokio-runtime-worker' panicked at src/render_queue.rs:88:21:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      "thread 'main' panicked at src/pipeline.rs:142:14:\ncalled `Result::unwrap()` on an `Err` value: DecoderInit(\"missing h264 baseline profile\")\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace",
+      "thread 'allocator-3' panicked at src/allocator.rs:57:9:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 24, kind: Uncategorized, message: \"Too many open files\" }",
+      "thread 'ffprobe-worker' panicked at src/ffprobe.rs:201:27:\ncalled `Option::unwrap()` on a `None` value\nstack backtrace:\n   0: rust_begin_unwind\n   1: core::panicking::panic_fmt",
+      "thread 'cache-flush' panicked at src/cache.rs:74:5:\ncalled `Result::unwrap()` on an `Err` value: Utf8Error { valid_up_to: 13, error_len: Some(1) }",
+      "thread 'main' panicked at src/main.rs:33:18:\ncalled `Result::unwrap()` on an `Err` value: Bind(\"0.0.0.0:8080 already in use\")",
+      "thread 'session-reaper' panicked at src/session.rs:118:19:\ncalled `Option::unwrap()` on a `None` value\nnote: session metadata disappeared mid-cleanup",
+      "thread 'worker-12' panicked at src/worker.rs:12:5:\ncalled `Result::unwrap()` on an `Err` value: FfmpegExited(137)\nnote: process terminated by SIGKILL",
+      "thread 'yiff-indexer' panicked at src/tagging.rs:211:30:\ncalled `Option::unwrap()` on a `None` value\nnote: expected at least one `yiff` marker in batch metadata",
+      "thread 'transffm-bridge' panicked at src/transffm.rs:44:16:\ncalled `Result::unwrap()` on an `Err` value: Protocol(\"transffm handshake failed: missing affirmed codec identity\")",
+      "thread 'api-upload' panicked at src/api.rs:61:17:\ncalled `Option::unwrap()` on a `None` value\nnote: multipart field `video` missing"
+    ];
+    let seconds = 10;
+
+    function setRandomCompilerError() {
+      const nextError = compilerErrors[Math.floor(Math.random() * compilerErrors.length)];
+      compilerError.textContent = nextError;
+    }
+
+    setRandomCompilerError();
 
     setInterval(() => {
       seconds -= 1;
       if (seconds >= 0) {
         countdown.textContent = String(seconds);
       }
-    }, 1000);
 
-    setTimeout(() => {
-      window.location.reload();
-    }, 5000);
+      if (seconds === 0) {
+        setRandomCompilerError();
+        seconds = 10;
+        countdown.textContent = String(seconds);
+      }
+    }, 1000);
   </script>
 </body>
 </html>
