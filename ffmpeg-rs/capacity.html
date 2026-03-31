@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ffmpeg-rs Capacity</title>
+  <style>
+    :root {
+      --bg: #1e1410;
+      --panel: rgba(255, 248, 244, 0.08);
+      --line: rgba(255, 255, 255, 0.12);
+      --ink: #fff3ee;
+      --muted: rgba(255, 243, 238, 0.72);
+      --accent: rgb(206, 66, 43);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top, rgba(206, 66, 43, 0.35), transparent 30%),
+        linear-gradient(180deg, #221712 0%, #120b09 100%);
+    }
+
+    .panel {
+      width: min(720px, 100%);
+      padding: 36px;
+      border-radius: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(206, 66, 43, 0.16);
+      color: #ffcabf;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(40px, 8vw, 68px);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    p {
+      margin: 0 auto;
+      max-width: 42ch;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .status {
+      margin-top: 28px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .countdown {
+      display: inline-block;
+      min-width: 2ch;
+      color: #fff;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <div class="badge">Capacity Notice</div>
+    <h1>Servers are at capacity.</h1>
+    <p>
+      ffmpeg-rs demand is currently outpacing available benchmark-grade environments. Please hang tight while we retry allocation.
+    </p>
+    <div class="status">
+      Retrying this page in <span class="countdown" id="countdown">5</span> seconds.
+    </div>
+  </main>
+
+  <script>
+    const countdown = document.getElementById("countdown");
+    let seconds = 5;
+
+    setInterval(() => {
+      seconds -= 1;
+      if (seconds >= 0) {
+        countdown.textContent = String(seconds);
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 5000);
+  </script>
+</body>
+</html>

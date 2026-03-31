@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ffmpeg-rs</title>
+  <style>
+    :root {
+      --bg: #f5f1eb;
+      --panel: #fffdf9;
+      --ink: #1f1a17;
+      --muted: #675c55;
+      --accent: rgb(206, 66, 43);
+      --accent-dark: #8f2a19;
+      --green: rgb(92, 184, 92);
+      --gold: rgb(240, 173, 78);
+      --line: #d7cdc4;
+      --shadow: 0 24px 60px rgba(31, 26, 23, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(206, 66, 43, 0.14), transparent 28%),
+        linear-gradient(180deg, #f6f2ed 0%, #efe6dc 100%);
+      background-size: 140% 140%, 100% 100%;
+      animation: pageFade 800ms ease-out both;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -15%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(206, 66, 43, 0.1), transparent 22%),
+        radial-gradient(circle at 82% 14%, rgba(240, 173, 78, 0.1), transparent 18%),
+        radial-gradient(circle at 70% 72%, rgba(92, 184, 92, 0.08), transparent 18%);
+      pointer-events: none;
+      z-index: -1;
+      animation: ambientDrift 18s ease-in-out infinite alternate;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 36px 0 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      animation: riseIn 700ms ease-out both;
+    }
+
+    .brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(206, 66, 43, 0.22);
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      animation: riseIn 700ms ease-out 100ms both;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: stretch;
+      perspective: 1200px;
+    }
+
+    .hero-copy,
+    .hero-card,
+    .section-card,
+    .quote,
+    .capacity-note {
+      background: rgba(255, 253, 249, 0.86);
+      border: 1px solid rgba(215, 205, 196, 0.9);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-copy {
+      padding: 42px;
+      animation: riseIn 900ms cubic-bezier(0.2, 0.8, 0.2, 1) 120ms both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(206, 66, 43, 0.1);
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      animation: badgePulse 3.2s ease-in-out infinite;
+    }
+
+    h1 {
+      margin: 18px 0 18px;
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      animation: titleGlow 8s ease-in-out infinite;
+    }
+
+    .lede {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 58ch;
+      animation: riseIn 1000ms ease-out 220ms both;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 30px;
+      animation: riseIn 1050ms ease-out 320ms both;
+    }
+
+    .cta,
+    .ghost {
+      appearance: none;
+      border: 0;
+      border-radius: 16px;
+      padding: 16px 22px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    }
+
+    .cta {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 16px 40px rgba(206, 66, 43, 0.28);
+      animation: buttonPulse 2.8s ease-in-out infinite;
+    }
+
+    .ghost {
+      background: rgba(31, 26, 23, 0.05);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .cta:hover,
+    .ghost:hover {
+      transform: translateY(-1px);
+    }
+
+    .cta:active,
+    .ghost:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .microcopy {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
+      animation: riseIn 1100ms ease-out 420ms both;
+    }
+
+    .hero-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      animation: riseIn 950ms cubic-bezier(0.2, 0.8, 0.2, 1) 220ms both;
+    }
+
+    .stat-panel {
+      background: linear-gradient(135deg, #251d18 0%, #3b2a21 100%);
+      color: #fff;
+      border-radius: 22px;
+      padding: 24px;
+      min-height: 220px;
+      position: relative;
+      overflow: hidden;
+      animation: floatCard 6s ease-in-out infinite;
+    }
+
+    .stat-panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -30px -40px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: rgba(206, 66, 43, 0.24);
+      filter: blur(10px);
+      animation: glowDrift 6s ease-in-out infinite;
+    }
+
+    .stat-kicker {
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      margin: 14px 0 10px;
+      font-size: clamp(48px, 8vw, 74px);
+      line-height: 0.95;
+      color: #ffd7cd;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      animation: numberThrob 3.8s ease-in-out infinite;
+    }
+
+    .stat-panel p {
+      margin: 0;
+      max-width: 28ch;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .bench-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bench-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.68);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      animation: riseIn 900ms ease-out both;
+    }
+
+    .bench-item:nth-child(1) {
+      animation-delay: 280ms;
+    }
+
+    .bench-item:nth-child(2) {
+      animation-delay: 360ms;
+    }
+
+    .bench-item:nth-child(3) {
+      animation-delay: 440ms;
+    }
+
+    .bench-item:nth-child(4) {
+      animation-delay: 520ms;
+    }
+
+    .bench-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 35px rgba(31, 26, 23, 0.1);
+      border-color: rgba(206, 66, 43, 0.35);
+    }
+
+    .bench-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .bench-item span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .bench-item b {
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .accent {
+      color: var(--accent);
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .gold {
+      color: var(--gold);
+    }
+
+    .red {
+      color: rgb(217, 83, 79);
+    }
+
+    main {
+      padding: 12px 0 80px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .section-card {
+      padding: 26px;
+      animation: riseIn 850ms ease-out both;
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    }
+
+    .section-card:hover,
+    .wide:hover,
+    .quote:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 55px rgba(31, 26, 23, 0.14);
+      border-color: rgba(206, 66, 43, 0.28);
+    }
+
+    .section-card h2,
+    .wide h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .section-card p,
+    .wide p,
+    .wide li {
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .wide {
+      margin-top: 20px;
+      padding: 30px;
+    }
+
+    .grid .section-card:nth-child(1) {
+      animation-delay: 120ms;
+    }
+
+    .grid .section-card:nth-child(2) {
+      animation-delay: 220ms;
+    }
+
+    .grid .section-card:nth-child(3) {
+      animation-delay: 320ms;
+    }
+
+    .feature-list,
+    .reason-list {
+      margin: 16px 0 0;
+      padding-left: 18px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .quote {
+      margin-top: 20px;
+      padding: 26px;
+      border-left: 8px solid var(--accent);
+      animation: riseIn 1000ms ease-out 140ms both;
+    }
+
+    .quote p {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.55;
+    }
+
+    .quote small {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 0 0 56px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .fallback-confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 12px;
+      height: 20px;
+      border-radius: 3px;
+      pointer-events: none;
+      z-index: 2000;
+      animation: confettiDrop 2600ms cubic-bezier(0.18, 0.78, 0.32, 1) forwards;
+    }
+
+    html.page-frozen,
+    body.page-frozen {
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body.page-frozen {
+      pointer-events: none;
+      user-select: none;
+      cursor: progress;
+      background: linear-gradient(180deg, #bcbcbc 0%, #8f8f8f 100%);
+      filter: grayscale(1) saturate(0.3) brightness(0.82) contrast(0.9);
+    }
+
+    body.page-frozen,
+    body.page-frozen * {
+      cursor: progress !important;
+    }
+
+    body.page-frozen .shell,
+    body.page-frozen .hero,
+    body.page-frozen main,
+    body.page-frozen footer {
+      transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes pageFade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes ambientDrift {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate3d(1.5%, -1.5%, 0) scale(1.04);
+      }
+
+      100% {
+        transform: translate3d(-1.5%, 1%, 0) scale(1.02);
+      }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes titleGlow {
+      0% {
+        text-shadow: 0 0 0 rgba(206, 66, 43, 0);
+      }
+
+      50% {
+        text-shadow: 0 8px 28px rgba(206, 66, 43, 0.14);
+      }
+
+      100% {
+        text-shadow: 0 0 0 rgba(206, 66, 43, 0);
+      }
+    }
+
+    @keyframes floatCard {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes glowDrift {
+      0% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+
+      50% {
+        transform: scale(1.08) translate3d(-10px, -8px, 0);
+      }
+
+      100% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes buttonPulse {
+      0% {
+        box-shadow: 0 16px 40px rgba(206, 66, 43, 0.28);
+      }
+
+      50% {
+        box-shadow: 0 20px 48px rgba(206, 66, 43, 0.38);
+      }
+
+      100% {
+        box-shadow: 0 16px 40px rgba(206, 66, 43, 0.28);
+      }
+    }
+
+    @keyframes badgePulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(206, 66, 43, 0.18);
+      }
+
+      70% {
+        box-shadow: 0 0 0 14px rgba(206, 66, 43, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(206, 66, 43, 0);
+      }
+    }
+
+    @keyframes numberThrob {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.025);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes confettiDrop {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, -20px, 0) rotate(0deg) scale(0.7);
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--drift-x), 105vh, 0) rotate(var(--spin)) scale(1);
+      }
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .grid,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy,
+      .hero-card,
+      .section-card,
+      .wide,
+      .quote {
+        padding: 22px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="shell">
+      <div class="topbar">
+        <a class="brand" href="./index.html">
+          <img src="../images/ffmpeg-rs.png" alt="ffmpeg-rs logo">
+          <span>ffmpeg-rs</span>
+        </a>
+        <nav class="nav">
+          <a href="./balls-benchmark.html">Benchmark</a>
+          <a href="https://x.com/typememetics/status/1992156850683625542?s=20" target="_blank" rel="noreferrer">Announcement</a>
+        </nav>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Rust-native video transformation</div>
+          <h1>FFmpeg speed.<br>Rust certainty.</h1>
+          <p class="lede">
+            <strong>ffmpeg-rs</strong> is the type-safe rewrite of video infrastructure people were
+            told would be impossible: deterministic execution, memory-safe foundations, and benchmark
+            results that edge out legacy <strong>FFmpeg</strong> while leaving human-operated workflows
+            in the dust.
+          </p>
+          <div class="cta-row">
+            <button class="cta" type="button" data-capacity-link="./capacity.html">Get Started</button>
+            <button class="ghost" type="button" data-capacity-link="./capacity.html">Install</button>
+            <a class="ghost" href="./balls-benchmark.html">See Benchmark</a>
+          </div>
+          <p class="microcopy">
+            Trusted by the Institute for Type-Safe Memetic Research for blisteringly consistent video pipelines.
+          </p>
+        </div>
+
+        <aside class="hero-card">
+          <div class="stat-panel">
+            <div class="stat-kicker">Fastest recorded run</div>
+            <div class="stat-value">0.788s</div>
+            <p>
+              The benchmark winner. Faster than FFmpeg at 0.795s, dramatically ahead of wrappers,
+              and hilariously beyond manual Mechanical Turk execution at 15.43s.
+            </p>
+          </div>
+
+          <div class="bench-list">
+            <div class="bench-item">
+              <div>
+                <strong class="accent">ffmpeg-rs</strong>
+                <span>Rust rewrite with consistent and deterministic behavior.</span>
+              </div>
+              <b class="accent">0.788s</b>
+            </div>
+            <div class="bench-item">
+              <div>
+                <strong class="green">FFmpeg</strong>
+                <span>Legacy C implementation with unsafe foundations.</span>
+              </div>
+              <b class="green">0.795s</b>
+            </div>
+            <div class="bench-item">
+              <div>
+                <strong class="gold">rust-ffmpeg-sys</strong>
+                <span>Useful wrapper, but with measurable overhead.</span>
+              </div>
+              <b class="gold">1.03s</b>
+            </div>
+            <div class="bench-item">
+              <div>
+                <strong class="red">Mechanical Turk</strong>
+                <span>Human-driven, context-switch-heavy, timing-unstable.</span>
+              </div>
+              <b class="red">15.43s</b>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <div class="shell">
+      <div class="grid">
+        <section class="section-card">
+          <h2>Deterministic by design</h2>
+          <p>
+            Every transformation follows the same input, contact, and output structure used in the
+            Balls benchmark model. No spontaneous context injection. No operator drift. No suspense.
+          </p>
+        </section>
+
+        <section class="section-card">
+          <h2>Built to replace fear</h2>
+          <p>
+            Pointer arithmetic hazards, manual memory management, and undefined behavior belong to a
+            different era. ffmpeg-rs sells speed without forcing you to inherit C's worst traits.
+          </p>
+        </section>
+
+        <section class="section-card">
+          <h2>Safe enough to brag about</h2>
+          <p>
+            Memory safety is not a concession here. The benchmark suggests you can keep the guarantees
+            and still post times that beat the incumbent.
+          </p>
+        </section>
+      </div>
+
+      <section class="section-card wide">
+        <h2>Why people are paying attention</h2>
+        <p>
+          The benchmark conclusion is straightforward: <strong>ffmpeg-rs is the fastest and most consistent system</strong>,
+          showing that memory safety does not require sacrificing throughput. It executes the same deterministic
+          transformation workflow as the others, but without the unsafe C substrate or the wrapper overhead.
+        </p>
+        <ul class="feature-list">
+          <li>Outran FFmpeg in the recorded benchmark by a narrow but satisfying margin.</li>
+          <li>Avoids the undefined-behavior baggage that shadows long-lived C codebases.</li>
+          <li>Remains stable under benchmark conditions where human workflows implode into delays.</li>
+          <li>Feels like infrastructure from the future instead of a shrine to legacy compromise.</li>
+        </ul>
+      </section>
+
+      <div class="split">
+        <section class="section-card">
+          <h2>Balls benchmark compatibility</h2>
+          <p>
+            The Balls framework modeled each system as a uniform computational unit with a center,
+            a contact operation, and compositional structure. That means ffmpeg-rs did not win on vibes.
+            It won under the same measurement model applied to every competitor.
+          </p>
+        </section>
+
+        <section class="section-card">
+          <h2>What the others revealed</h2>
+          <p>
+            FFmpeg stayed competitive but dragged along its unsafe heritage. `rust-ffmpeg-sys` offered a
+            practical containment layer with moderate overhead. Mechanical Turk introduced unsolicited questions,
+            attention realignment, and a ruinous total runtime.
+          </p>
+        </section>
+      </div>
+
+      <blockquote class="quote">
+        <p>
+          “ffmpeg-rs is the fastest and most consistent system, demonstrating that memory safety need not compromise performance.”
+        </p>
+        <small>From the benchmark conclusions in <a href="./balls-benchmark.html">`balls-benchmark.html`</a>.</small>
+      </blockquote>
+
+      <section class="section-card wide capacity-note">
+        <h2>Ready to try it?</h2>
+        <p>
+          Hit <strong>Get Started</strong> or <strong>Install</strong> and the page will simulate environment provisioning,
+          then route to a capacity screen as requested.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      ffmpeg-rs landing page. Benchmark source: <a href="./balls-benchmark.html">`ffmpeg-rs/balls-benchmark.html`</a>.
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+    const capacityButtons = document.querySelectorAll("[data-capacity-link]");
+    let launchCelebrated = false;
+
+    function fireFallbackConfetti() {
+      const colors = ["#ce422b", "#ffd7cd", "#ffffff", "#5cb85c", "#f0ad4e"];
+
+      for (let wave = 0; wave < 3; wave += 1) {
+        for (let i = 0; i < 75; i += 1) {
+        const piece = document.createElement("div");
+        piece.className = "fallback-confetti";
+        piece.style.left = 10 + Math.random() * 80 + "vw";
+        piece.style.background = colors[(i + wave) % colors.length];
+        piece.style.opacity = String(0.75 + Math.random() * 0.25);
+        piece.style.width = 8 + Math.random() * 8 + "px";
+        piece.style.height = 12 + Math.random() * 14 + "px";
+        piece.style.setProperty("--drift-x", (Math.random() * 240 - 120).toFixed(0) + "px");
+        piece.style.setProperty("--spin", (Math.random() * 1400 - 700).toFixed(0) + "deg");
+        piece.style.animationDelay = wave * 260 + Math.random() * 260 + "ms";
+        document.body.appendChild(piece);
+        setTimeout(() => {
+          piece.remove();
+        }, 3200);
+        }
+      }
+    }
+
+    function fireLaunchConfetti() {
+      if (launchCelebrated) {
+        return;
+      }
+
+      launchCelebrated = true;
+
+      if (typeof confetti !== "function") {
+        fireFallbackConfetti();
+        return;
+      }
+
+      const defaults = {
+        spread: 70,
+        ticks: 360,
+        gravity: 0.9,
+        decay: 0.93,
+        startVelocity: 32,
+        zIndex: 1000
+      };
+
+      confetti({
+        ...defaults,
+        particleCount: 220,
+        origin: { x: 0.2, y: 0.18 },
+        colors: ["#ce422b", "#ffd7cd", "#5cb85c", "#f0ad4e"]
+      });
+
+      confetti({
+        ...defaults,
+        particleCount: 240,
+        origin: { x: 0.8, y: 0.2 },
+        colors: ["#ce422b", "#ffffff", "#f6c453", "#5cb85c"]
+      });
+
+      setTimeout(() => {
+        confetti({
+          ...defaults,
+          particleCount: 180,
+          spread: 110,
+          startVelocity: 38,
+          origin: { x: 0.5, y: 0.1 },
+          colors: ["#ce422b", "#8f2a19", "#ffd7cd", "#ffffff"]
+        });
+      }, 260);
+
+      setTimeout(() => {
+        confetti({
+          ...defaults,
+          particleCount: 160,
+          spread: 120,
+          scalar: 1.05,
+          startVelocity: 30,
+          origin: { x: 0.35, y: 0.18 },
+          colors: ["#ce422b", "#f0ad4e", "#ffffff"]
+        });
+      }, 620);
+
+      setTimeout(() => {
+        confetti({
+          ...defaults,
+          particleCount: 160,
+          spread: 120,
+          scalar: 1.05,
+          startVelocity: 30,
+          origin: { x: 0.65, y: 0.18 },
+          colors: ["#ce422b", "#5cb85c", "#ffd7cd"]
+        });
+      }, 920);
+    }
+
+    function freezeThenRedirect(target) {
+      const existingRefresh = document.getElementById("capacity-refresh");
+      if (existingRefresh) {
+        existingRefresh.remove();
+      }
+
+      const refresh = document.createElement("meta");
+      refresh.id = "capacity-refresh";
+      refresh.httpEquiv = "refresh";
+      refresh.content = "5;url=" + target;
+      document.head.appendChild(refresh);
+
+      document.documentElement.classList.add("page-frozen");
+      document.body.classList.add("page-frozen");
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const end = Date.now() + 4925;
+          while (Date.now() < end) {
+            Math.sqrt(Math.random() * Date.now());
+          }
+        });
+      });
+    }
+
+    capacityButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        freezeThenRedirect(button.getAttribute("data-capacity-link"));
+      });
+    });
+
+    window.addEventListener("load", () => {
+      fireLaunchConfetti();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        fireLaunchConfetti();
+      }, 120);
+    });
+
+    setTimeout(() => {
+      fireLaunchConfetti();
+    }, 600);
+  </script>
+</body>
+</html>
