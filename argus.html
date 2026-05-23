@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: black;
+      cursor: none;
+    }
+
+    .eye-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .eye-outer {
+      position: relative;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(127, 29, 29, 0.2), rgba(153, 27, 27, 0.4), transparent);
+      animation: pulse 4s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 100px 20px rgba(220, 38, 38, 0.2); }
+      100% { box-shadow: 0 0 150px 40px rgba(220, 38, 38, 0.3); }
+    }
+
+    .eye-iris {
+      position: absolute;
+      inset: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #dc2626, #991b1b, #7f1d1d);
+      box-shadow: 0 0 50px 10px rgba(220, 38, 38, 0.5);
+    }
+
+    .eye-inner {
+      position: absolute;
+      inset: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220, 38, 38, 0.8), rgba(153, 27, 27, 0.6), transparent);
+    }
+
+    .eye-pupil {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fcd34d, #f59e0b, #dc2626);
+      box-shadow: 0 0 20px 5px rgba(252, 211, 77, 0.5);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.075s ease-out;
+    }
+
+    .pupil-center {
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef3c7, #fcd34d);
+    }
+
+    .pupil-highlight {
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.8), rgba(252, 211, 77, 0));
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .reflection {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(103, 232, 249, 0.6);
+      filter: blur(3px);
+    }
+
+    .reflection-1 {
+      top: 40px;
+      left: 60px;
+      width: 16px;
+      height: 32px;
+    }
+
+    .reflection-2 {
+      top: 60px;
+      right: 80px;
+      width: 12px;
+      height: 24px;
+      background-color: rgba(103, 232, 249, 0.4);
+    }
+
+    .reflection-3 {
+      bottom: 80px;
+      left: 100px;
+      width: 8px;
+      height: 16px;
+      background-color: rgba(96, 165, 250, 0.5);
+    }
+
+    .reflection-4 {
+      bottom: 60px;
+      right: 60px;
+      width: 12px;
+      height: 20px;
+      background-color: rgba(103, 232, 249, 0.3);
+    }
+
+    .reflection-5 {
+      top: 100px;
+      left: 160px;
+      width: 8px;
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .outer-glow {
+      position: absolute;
+      inset: -48px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220, 38, 38, 0.2), transparent);
+      filter: blur(48px);
+      animation: pulse 4s infinite alternate;
+    }
+
+    .inner-glow {
+      position: absolute;
+      inset: -32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220, 38, 38, 0.3), transparent);
+      filter: blur(32px);
+    }
+
+    .ambient-light {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(127, 29, 29, 0.3), transparent, black);
+      pointer-events: none;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        rgba(220, 38, 38, 0.2) 2px,
+        transparent 4px
+      );
+      animation: scan 10s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
+    }
+
+    @media (max-width: 768px) {
+      .eye-outer {
+        width: 500px;
+        height: 500px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .eye-outer {
+        width: 380px;
+        height: 380px;
+      }
+
+      .eye-pupil {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="eye-container">
+    <div class="eye-outer">
+      <div class="reflection reflection-1"></div>
+      <div class="reflection reflection-2"></div>
+      <div class="reflection reflection-3"></div>
+      <div class="reflection reflection-4"></div>
+      <div class="reflection reflection-5"></div>
+
+      <div class="eye-iris">
+        <div class="eye-inner">
+          <div class="eye-pupil" id="pupil">
+            <div class="pupil-center">
+              <div class="pupil-highlight"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outer-glow"></div>
+      <div class="inner-glow"></div>
+    </div>
+  </div>
+
+  <div class="ambient-light"></div>
+
+  <div class="scanlines"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const pupil = document.getElementById('pupil');
+
+      document.addEventListener('mousemove', (e) => {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        const centerX = windowWidth / 2;
+        const centerY = windowHeight / 2;
+
+        const deltaX = e.clientX - centerX;
+        const deltaY = e.clientY - centerY;
+
+        const maxDistance = 80;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const limitedDistance = Math.min(distance, maxDistance);
+
+        const angle = Math.atan2(deltaY, deltaX);
+        const pupilX = Math.cos(angle) * limitedDistance;
+        const pupilY = Math.sin(angle) * limitedDistance;
+
+        pupil.style.transform = `translate(calc(-50% + ${pupilX}px), calc(-50% + ${pupilY}px))`;
+      });
+    });
+  </script>
+</body>
+</html>
