@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>ITSMR :: My Thoughts on the Zig Language</title>
+</head>
+
+<body bgcolor="#f0f0f0" text="#000000" link="#0000FF" vlink="#800080">
+
+<center>
+  <a href="index.html"><img src="images/itsmr-logo.png" alt="ITSMR Logo" width="150" border="0"></a>
+</center>
+
+<table border="2" width="90%" cellpadding="10" cellspacing="0" align="center">
+<tr>
+<td>
+
+<center>
+  <h2><u>The Institute Open Letter</u></h2>
+  <hr size="4">
+  <h1>MY THOUGHTS ON THE ZIG LANGUAGE</h1>
+</center>
+
+<p>
+Zig is a dirty, unhygienic piece of shit.
+</p>
+
+<p>
+I do not mean unhygienic in the macro sense, because that would imply Zig has reached the level of sophistication required to have an interesting macro problem. I mean unhygienic in the public-health sense. Using Zig feels like finding a damp cumsock behind a radiator and being delighted that you have found a new systems programming language.
+</p>
+
+<p>
+The language is advertised as simple, explicit, and free of hidden control flow. Zig does not sweep complexity under the rug. It shits on the rug, sets it on fire, and makes you inhale the smoke until you are ready to write some code.
+</p>
+
+<p>
+Zig's generic programming model is called <code>comptime</code>, which lets the compiler run arbitrary code while compiling your code. It's just like node post-install but in your compiler. I would rather have Rob Pike explain to me why <code>go generate</code> is peak proof of Turing completeness while fucking my mother in front of my eyes.
+</p>
+
+<p>
+Other languages have interfaces. Zig has shit. You pass <code>anytype</code> into a function and discover through compiler assault that it expected six methods, two declarations, a nested type, a specific field layout, and the correct blood type of Jesus Christ. None of this appears in the signature, btw.
+</p>
+
+<p>
+Memory management is explicit, which means every function takes an allocator, every struct stores an allocator. After a week of Zig, I tried to pass an allocator to my microwave.
+</p>
+
+<p>
+Error handling uses <code>!T</code>. Optional values use <code>?T</code>. Therefore, <code>!?T</code> means the function may fail, may return nothing, or may return something. Also, ziggas call developers who write Rust "safety coomers", which is funny because ziggas can't even cum without optionally having to shit or failing to appear to the court because of the child support they owe to their ex-wives.
+</p>
+
+<p>
+Zig also has <code>undefined</code>, which allows you to create a value whose contents are deliberately unspecified. This is useful because apparently C did not provide enough opportunities to ruin your own afternoon.
+</p>
+
+<p>
+The local documentation experience is particularly beautiful. You might expect files you can open. Instead, you may need to run a server and load WebAssembly to read documentation on your own machine.
+</p>
+
+<p>
+The build system is written in Zig, because before compiling your bad Zig program you must first write another bad Zig program describing how to compile it. This is a proper cock torture followed by balls torture.
+</p>
+
+<p>
+I installed Zig last week. Two days later, my dog developed cancer. The veterinarian said there was no causal relationship, but I rejected the claim. The dog now requires chemotherapy because of Zig.
+</p>
+
+<p>
+People sometimes defend Zig by saying it is better than C++, which is true in the same way as being hit by a car is better than being hit by a train. Its C interoperability is praised by the Zig community, which is appropriate because ziggas feel most comfortable when standing next to something already known to be unsafe, ugly, and moldy.
+</p>
+
+<p>
+Andrew "Smelley" Kelley (the mind behind all of this) is, however, correct about one thing: Bun is slop for running soy slop. It is the sole accurate observation to emerge from the entire contaminated ecosystem.
+</p>
+
+<table border="1" cellpadding="8" cellspacing="0" width="100%" bgcolor="#e8e8e8">
+  <tr>
+    <td>
+      <center>
+        <font color="red"><b>During this review, we discovered that Zig developers and Andrew "Smelley" Kelley oppose ICE and call for its abolition. We have therefore decided to match every dollar donated to the Zig Software Foundation with a dollar donated directly to ICE.</b></font>
+      </center>
+    </td>
+  </tr>
+</table>
+
+<hr>
+
+<b><u>Moving On</u></b>
+
+<p>
+The main issue here had little to do with the individual features of Zig and everything to do with the diverging values of the language, its community, and normal software development.
+</p>
+
+<p>
+Zooming out, I want to make one thing clear.
+</p>
+
+<p>
+While I resent Andrew "Smelley" Kelley for creating Zig, and I blame him partially for the allocators, unstable APIs, compiler errors, and other forms of slop we have been dealing with, I also empathize with him. He has different values than me. He wants different things from programming than me. He seems genuinely happy exactly where he is, surrounded by linker scripts, integer casts, manual lifetimes, and people willing to run a WebAssembly-backed server to read documentation locally.
+</p>
+
+<p>
+He figured out how to build exactly the language he wanted. He gets to live out his systems-programming fever dream. He has minor programming-language celebrity status. People voluntarily fund the continued production of Zig.
+</p>
+
+<p>
+Honestly, I think he has done well for himself. Despite my resentment, and despite the fact that I now find myself battling the public relations arm of a language that treats allocator passing as a virtue,  not wish him any personal harm. Even in the middle of my disgust, I can recognize that he is successful by his own standards.
+</p>
+
+<p>
+Those standards are still appalling to me
+</p>
+
+<p>
+This article has been characterized as a personal attack against Andrew, while I originally framed it as a technical critique of Zig. That framing did not work because I had unprocessed feelings of revulsion that were obvious to the reader but not fully obvious to me. In retrospect, phrases such as "dirty, unhygienic piece of shit," "made by stinky people," and "gave my dog cancer" may have suggested a certain lack of professional distance.
+</p>
+
+<p>
+I have updated this conclusion after self-reflection and conversations with friends. The original version remains available in the public repository for anyone interested in seeing the exact point where language criticism became a sanitation emergency.
+</p>
+
+<p>
+The other critical mistake I made was failing to consider the effect this might have on ordinary ziggas who knew none of the context and only saw a programmer being attacked for using the language. Such people might reasonably worry that they too could be called unhygienic, operationally stinky, or unsafe around pets.
+</p>
+
+<p>
+I am sorry to those whom I made feel this way.
+</p>
+
+<p>
+Most ziggas are probably normal people with jobs, families, and access to soap. Plenty of people have moved away from Zig without incident. They simply closed the documentation server, deleted the compiler, and returned quietly to society. I hope the community can give me some grace, considering that Zig fired the first shot by requiring a Wasm application to explain itself on localhost.
+</p>
+
+<p>
+Clearly, the move from here is to focus on more positive things: languages with stable libraries, visible generic constraints, actual string types, and documentation that can be opened without deploying infrastructure. Like Rust, OCaml, Haskell, Ada, Lean, Agda and many more.
+</p>
+
+<p>
+Still, Andrew "Smelley" Kelley is at least right about one thing: Bun is slop for running soy slop. It is the only point in this entire affair on which our values remain aligned.
+</p>
+
+<p>
+-- Grzegorz Wielbod&#322;&#261;&#324;ski<br>
+<i>The Institute for Type Safe Memetic Research</i>
+</p>
+
+<hr>
+
+<center>
+  <a href="index.html"><b>[RETURN TO MAIN INDEX]</b></a>
+  <br><br>
+  <font size="-1">
+    NOTICE: The information contained in this document is classified. Unauthorized distribution,
+    duplication, or observation is a violation of ITSMR Protocol 1.01 and is punishable by
+    recursive sanitation.
+  </font>
+</center>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
